@@ -29,6 +29,7 @@
       --net-green: #22c55e;
       --net-green-dim: rgba(34,197,94,0.12);
       --personal-gray: #9ca3af;
+      --gwwc-orange: #e8912d;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -67,6 +68,33 @@
       padding: 7rem 2rem 4rem;
     }
 
+    /* GWWC Diamond decoration */
+    .gwwc-diamond {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      transform: rotate(45deg);
+      background: linear-gradient(135deg, #f0c040 0%, #e8912d 50%, #d4a843 100%);
+      box-shadow: 0 0 12px rgba(232,145,45,0.4), inset 0 0 4px rgba(255,255,255,0.3);
+      border-radius: 2px;
+      vertical-align: middle;
+      margin: 0 0.3rem;
+      position: relative;
+    }
+    .gwwc-diamond::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 60%);
+      border-radius: 1px;
+    }
+    .gwwc-diamond-sm {
+      width: 10px; height: 10px;
+    }
+    .gwwc-diamond-lg {
+      width: 24px; height: 24px;
+    }
+
     /* Hero */
     .impact-hero {
       text-align: center;
@@ -101,6 +129,20 @@
       color: var(--net-green);
       text-decoration: underline;
       text-underline-offset: 3px;
+    }
+    .gwwc-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(232,145,45,0.08);
+      border: 1px solid rgba(232,145,45,0.2);
+      border-radius: 6px;
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      color: var(--gwwc-orange);
     }
 
     /* Counters */
@@ -157,6 +199,75 @@
     .conf-med { background: #fbbf24; }
     .conf-low { background: #f87171; }
 
+    /* Info tooltip */
+    .info-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--impact-text-dim);
+      cursor: pointer;
+      vertical-align: middle;
+      margin-left: 4px;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .info-toggle:hover {
+      background: rgba(255,255,255,0.12);
+      color: var(--impact-text);
+    }
+    .info-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      padding: 0.8rem 1rem;
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      line-height: 1.6;
+      color: var(--impact-text);
+      z-index: 50;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      text-align: left;
+    }
+    .info-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #1a1a1a;
+    }
+    .info-toggle:hover .info-tooltip,
+    .info-toggle.active .info-tooltip {
+      display: block;
+    }
+    .info-tooltip strong {
+      color: var(--impact-text-bright);
+      display: block;
+      margin-bottom: 0.3rem;
+      font-size: 0.7rem;
+    }
+    .info-tooltip .src {
+      display: block;
+      margin-top: 0.4rem;
+      font-size: 0.65rem;
+      color: var(--impact-text-dim);
+      font-style: italic;
+    }
+
     /* Section headers */
     .section-divider {
       margin: 5rem 0 2.5rem;
@@ -177,6 +288,12 @@
       margin-bottom: 0.3rem;
       display: block;
     }
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--impact-text-dim);
+      margin-top: 0.5rem;
+      line-height: 1.6;
+    }
 
     /* Sankey */
     #sankey-container {
@@ -184,9 +301,7 @@
       min-height: 400px;
       margin: 2rem 0;
     }
-    #sankey-container svg {
-      width: 100%;
-    }
+    #sankey-container svg { width: 100%; }
     .sankey-node text {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
@@ -196,9 +311,7 @@
       fill: none;
       stroke-opacity: 0.3;
     }
-    .sankey-link:hover {
-      stroke-opacity: 0.6;
-    }
+    .sankey-link:hover { stroke-opacity: 0.6; }
 
     /* Timeline */
     .timeline-chart {
@@ -253,6 +366,49 @@
       color: var(--net-green);
     }
 
+    /* Broader Impact Section */
+    .broader-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--impact-border);
+      border: 1px solid var(--impact-border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 2rem 0;
+    }
+    .broader-card {
+      background: var(--impact-surface);
+      padding: 1.8rem;
+    }
+    .broader-card .card-icon-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .broader-card .card-emoji {
+      font-size: 1.3rem;
+    }
+    .broader-card h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--impact-text-bright);
+    }
+    .broader-card p {
+      font-size: 0.82rem;
+      color: var(--impact-text-dim);
+      line-height: 1.7;
+      margin-bottom: 0.5rem;
+    }
+    .broader-card .metric {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--net-green);
+      opacity: 0.8;
+    }
+
     /* Moral Ledger */
     .ledger {
       display: grid;
@@ -302,6 +458,18 @@
       font-size: 0.78rem;
       opacity: 0.6;
     }
+    .ledger-section-label {
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.45rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--impact-text-dim);
+      opacity: 0.5;
+      margin-top: 1.2rem;
+      margin-bottom: 0.3rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--impact-border);
+    }
 
     .net-bar-container {
       margin: 2rem 0;
@@ -339,9 +507,7 @@
     }
 
     /* Methodology */
-    .methodology {
-      margin: 3rem 0;
-    }
+    .methodology { margin: 3rem 0; }
     .method-toggle {
       font-family: 'Silkscreen', monospace;
       font-size: 0.6rem;
@@ -363,9 +529,7 @@
       overflow: hidden;
       transition: max-height 0.5s ease;
     }
-    .method-content.open {
-      max-height: 3000px;
-    }
+    .method-content.open { max-height: 5000px; }
     .method-inner {
       padding: 2rem 0;
       font-size: 0.85rem;
@@ -409,13 +573,32 @@
       opacity: 0.4;
     }
 
+    /* Diamond decorative dividers */
+    .diamond-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      margin: 3rem 0;
+      opacity: 0.3;
+    }
+    .diamond-divider::before, .diamond-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gwwc-orange), transparent);
+    }
+
     @media (max-width: 768px) {
       .counters { grid-template-columns: 1fr; }
       .ledger { grid-template-columns: 1fr; }
+      .broader-grid { grid-template-columns: 1fr; }
       .impact-container { padding: 5rem 1.2rem 3rem; }
       .impact-nav { padding: 0.8rem 1rem; }
       .impact-nav .nav-right { display: none; }
       .fan-controls { flex-direction: column; }
+      .info-tooltip { width: 220px; left: auto; right: -10px; transform: none; }
+      .info-tooltip::after { left: auto; right: 15px; transform: none; }
     }
   </style>
 </head>
@@ -437,6 +620,11 @@
       <span class="tag">Personal Impact Estimator</span>
       <h1>How Much Good<br>Can One Career Do?</h1>
       <p class="intro">I'm a member of <a href="https://www.givingwhatwecan.org/" target="_blank" rel="noopener">Giving What We Can</a>, pledging 10% of my post-tax income to the most effective charities I can find. This page tracks the estimated real-world impact of that commitment &mdash; openly, with real numbers, explicit methodology, and honest uncertainty.</p>
+      <div class="gwwc-badge">
+        <span class="gwwc-diamond gwwc-diamond-sm"></span>
+        GWWC 10% PLEDGE MEMBER
+        <span class="gwwc-diamond gwwc-diamond-sm"></span>
+      </div>
     </div>
 
     <!-- COMPONENT 1: HERO COUNTERS -->
@@ -444,19 +632,25 @@
       <div class="counter-cell">
         <div class="counter-value" style="color:var(--health-gold)" id="counter-lives">0</div>
         <div class="counter-label">Statistical Lives Saved</div>
-        <div class="counter-source">via $33.3K to GiveWell top charities</div>
+        <div class="counter-source">via $33.3K to GiveWell top charities
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>How is this calculated?</strong>Based on GiveWell's blended cost-effectiveness: $5,000 per statistical life saved. $33,300 &div; $5,000 = 6.7 lives. Uses conservative estimate accounting for imperfect optimization and rising costs.<span class="src">Source: GiveWell 2022-2024 cost-effectiveness analyses</span></span></span>
+        </div>
         <div class="confidence"><div class="conf-dot conf-high"></div> MEDIUM-HIGH</div>
       </div>
       <div class="counter-cell">
         <div class="counter-value" style="color:var(--animal-teal)" id="counter-animals">0</div>
         <div class="counter-label">Animals with Improved Conditions</div>
-        <div class="counter-source">via $18.5K to ACE-recommended charities</div>
+        <div class="counter-source">via $18.5K to ACE-recommended charities
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>How is this calculated?</strong>ACE central estimate: ~6 animals per dollar (discounted from 11-14 range). $18,500 &times; 6 = ~111,000. Almost entirely chickens/hens via corporate cage-free campaigns. Range: 37K&ndash;259K.<span class="src">Source: Animal Charity Evaluators + THL 2024 self-analysis</span></span></span>
+        </div>
         <div class="confidence"><div class="conf-dot conf-med"></div> LOW-MEDIUM</div>
       </div>
       <div class="counter-cell">
         <div class="counter-value" style="color:var(--health-gold)" id="counter-dalys">0</div>
         <div class="counter-label">DALYs Averted</div>
-        <div class="counter-source">from global health giving</div>
+        <div class="counter-source">from global health giving
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>How is this calculated?</strong>6.7 lives saved &times; ~37 DALYs per life (based on under-5 mortality in sub-Saharan Africa, ~60yr life expectancy remaining). DALY = Disability-Adjusted Life Year.<span class="src">Source: WHO Global Burden of Disease methodology</span></span></span>
+        </div>
         <div class="confidence"><div class="conf-dot conf-high"></div> MEDIUM-HIGH</div>
       </div>
     </div>
@@ -465,6 +659,7 @@
     <div class="section-divider">
       <span class="section-num">02</span>
       <h2>Career to Impact</h2>
+      <p class="section-subtitle">How $2.9M in career earnings flows through taxes, savings, expenses, and giving to real-world outcomes.</p>
     </div>
     <div id="sankey-container"></div>
 
@@ -507,39 +702,151 @@
     </div>
     <div id="fanchart-container"></div>
 
-    <!-- COMPONENT 5: MORAL LEDGER -->
+    <div class="diamond-divider">
+      <span class="gwwc-diamond gwwc-diamond-sm"></span>
+    </div>
+
+    <!-- COMPONENT 5: BROADER IMPACT -->
     <div class="section-divider">
       <span class="section-num">05</span>
+      <h2>Beyond the Numbers</h2>
+      <p class="section-subtitle">Impact is more than charitable giving. These are harder to quantify but no less real.</p>
+    </div>
+
+    <div class="broader-grid">
+      <div class="broader-card">
+        <div class="card-icon-row">
+          <span class="card-emoji">&#x1f33f;</span>
+          <h4>Vegetarianism</h4>
+        </div>
+        <p>I don't eat meat. The average American consumes ~225 lbs of meat per year, responsible for roughly 25-30 land animals killed and significant environmental impact.</p>
+        <span class="metric">~200 animals not killed over career to date
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>Methodology</strong>Average American eats ~225 lbs of meat/yr, equating to ~25-30 land animals killed. Over 7 years: ~175-210 animals. Does not count fish. Note: still consumes eggs, dairy (see Moral Ledger).<span class="src">USDA ERS food availability data</span></span></span>
+        </span>
+      </div>
+      <div class="broader-card">
+        <div class="card-icon-row">
+          <span class="card-emoji">&#x1f4bc;</span>
+          <h4>Earning-to-Give Premium</h4>
+        </div>
+        <p>By choosing investment banking over a median career path, my earning-to-give capacity is roughly 4&times; what it would otherwise be.</p>
+        <span class="metric">$132K additional giving capacity enabled
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>Methodology</strong>Counterfactual: ~$100K/yr in generic corporate role &times; 7 years = $700K. Actual: $2.9M. Premium: $2.2M. Post-tax premium (~60%): $1.32M. 10% pledge on premium = $132K additional giving capacity.<span class="src">Based on BYU finance grad median outcomes</span></span></span>
+        </span>
+      </div>
+      <div class="broader-card">
+        <div class="card-icon-row">
+          <span class="card-emoji">&#x26ea;</span>
+          <h4>Mission Service &amp; Community</h4>
+        </div>
+        <p>Served a two-year mission (LDS), baptizing 75 people. Regardless of religious views now, this brought meaning, community, and belonging to those individuals.</p>
+        <span class="metric">75 people brought into a community
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>Note on quantification</strong>The wellbeing impact of religious community membership is genuinely positive for many: social support, purpose, belonging. Hard to quantify in standard welfare units. Carson has since left the LDS church but does not discount the value of community for others.<span class="src">Personal experience, 2013-2015</span></span></span>
+        </span>
+      </div>
+      <div class="broader-card">
+        <div class="card-icon-row">
+          <span class="card-emoji">&#x1f91d;</span>
+          <h4>Community &amp; Friendship</h4>
+        </div>
+        <p>Close friendships and community involvement matter. Being a reliable friend, mentor, and community member creates genuine wellbeing that standard impact metrics miss entirely.</p>
+        <span class="metric">Unquantifiable but real</span>
+      </div>
+      <div class="broader-card">
+        <div class="card-icon-row">
+          <span class="card-emoji">&#x1f4c8;</span>
+          <h4>Surplus Value Through Work</h4>
+        </div>
+        <p>As a dealmaker in LP secondaries, I help institutional investors access liquidity and optimize portfolios. This market-making creates economic surplus beyond my compensation.</p>
+        <span class="metric">~$2B+ in transactions facilitated
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>Methodology</strong>Standard economics: market-makers create consumer surplus by reducing search costs and improving price discovery. Exact surplus is hard to measure, but the transactions I've facilitated represent billions in notional value where both parties benefit.<span class="src">Career transaction volume estimate</span></span></span>
+        </span>
+      </div>
+      <div class="broader-card">
+        <div class="card-icon-row">
+          <span class="card-emoji">&#x1f52e;</span>
+          <h4>Forecasting &amp; Public Goods</h4>
+        </div>
+        <p>Active forecaster on <a href="https://manifold.markets" target="_blank" rel="noopener" style="color:var(--animal-teal)">Manifold Markets</a>. Good calibration on prediction markets improves collective decision-making and information aggregation.</p>
+        <span class="metric">Contributing to collective intelligence</span>
+      </div>
+    </div>
+
+    <!-- COMPONENT 6: MORAL LEDGER -->
+    <div class="section-divider">
+      <span class="section-num">06</span>
       <h2>Moral Ledger</h2>
+      <p class="section-subtitle">An honest accounting of both the costs and benefits of this life, including uncomfortable externalities.</p>
     </div>
 
     <div class="ledger">
       <div class="ledger-col ledger-debit">
-        <div class="ledger-title">Debits &mdash; Environmental Cost</div>
-        <div class="ledger-row"><span class="label">Annual Carbon Footprint</span><span class="value" style="color:var(--carbon-red)">~46 t CO&#8322;</span></div>
+        <div class="ledger-title">Debits &mdash; Costs &amp; Externalities</div>
+
+        <div class="ledger-section-label">Carbon Footprint</div>
+        <div class="ledger-row"><span class="label">Annual Carbon Footprint</span><span class="value" style="color:var(--carbon-red)">~46 t CO&#8322;
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>Carbon calculation</strong>Flight emissions: 0.25 kg CO&#8322; per passenger-mile (ICAO standard). ~42 round trips/yr. Car: 0.42 kg/mi (EPA avg). Housing: SF grid ~85% carbon-free. Standard offsets: $15/tonne (Gold Standard).<span class="src">ICAO, EPA emission factors</span></span></span>
+        </span></div>
         <div class="ledger-row ledger-sub"><span class="label">Flights (80%)</span><span class="value">36.8t</span></div>
         <div class="ledger-row ledger-sub"><span class="label">Food &amp; goods (13%)</span><span class="value">6.0t</span></div>
         <div class="ledger-row ledger-sub"><span class="label">Housing (4%)</span><span class="value">2.0t</span></div>
         <div class="ledger-row ledger-sub"><span class="label">Car (2%)</span><span class="value">0.9t</span></div>
-        <div class="ledger-row" style="margin-top:1rem"><span class="label">vs. US Average</span><span class="value">16t (2.9&times;)</span></div>
+        <div class="ledger-row" style="margin-top:0.5rem"><span class="label">vs. US Average</span><span class="value">16t (2.9&times;)</span></div>
         <div class="ledger-row"><span class="label">Career cumulative</span><span class="value">~250t</span></div>
         <div class="ledger-row total"><span class="label">Offset cost (standard)</span><span class="value" style="color:var(--carbon-red)">$3,750</span></div>
         <div class="ledger-row"><span class="label">Offset cost (premium CDR)</span><span class="value">$25K&ndash;$150K</span></div>
+
+        <div class="ledger-section-label">Product Externalities</div>
+        <div class="ledger-row"><span class="label">Eggs consumed (~3/week)</span><span class="value" style="color:var(--carbon-red)">~156 eggs/yr
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>Egg externalities</strong>Most commercial eggs come from battery-caged or cage-free (but still confined) hens. Each hen produces ~300 eggs/yr, with ~72-week productive life. Even cage-free certifications allow significant suffering.<span class="src">USDA, Humane Society estimates</span></span></span>
+        </span></div>
+        <div class="ledger-row"><span class="label">Dairy consumed (moderate)</span><span class="value" style="color:var(--carbon-red)">~$600/yr
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>Dairy externalities</strong>Dairy cows endure repeated impregnation, calf separation, and often confined conditions. Cheese production is especially resource-intensive: ~10 lbs milk per 1 lb cheese. Moderate consumption but nonzero animal welfare cost.<span class="src">ACE, Our World in Data</span></span></span>
+        </span></div>
+        <div class="ledger-row"><span class="label">Fast fashion (occasional)</span><span class="value">Low</span></div>
+        <div class="ledger-row"><span class="label">Electronics (phone, laptop)</span><span class="value">Low-Med
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>Electronics supply chain</strong>Consumer electronics involve mining (cobalt, lithium, rare earths) with environmental and labor costs. Moderate impact through infrequent replacement cycles.<span class="src">Environmental Research Letters</span></span></span>
+        </span></div>
+
+        <div class="ledger-section-label">Opportunity Costs</div>
+        <div class="ledger-row"><span class="label">High-income lifestyle creep</span><span class="value" style="color:var(--carbon-red)">~2.9&times; avg carbon</span></div>
+        <div class="ledger-row"><span class="label">Below GWWC pledge target</span><span class="value" style="color:var(--carbon-red)">&ndash;$65K gap
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>Giving gap</strong>At 10% post-tax target over career, should have given ~$150K. Has given ~$84.5K. Plans to catch up via appreciated stock donation in 2026.<span class="src">Self-assessed against GWWC pledge</span></span></span>
+        </span></div>
+        <div class="ledger-row"><span class="label">Time not volunteered</span><span class="value">Moderate</span></div>
+
+        <div class="ledger-row total"><span class="label">Total Moral Cost (est.)</span><span class="value" style="color:var(--carbon-red)">$70K&ndash;$220K</span></div>
       </div>
+
       <div class="ledger-col ledger-credit">
-        <div class="ledger-title">Credits &mdash; Giving Impact</div>
-        <div class="ledger-row"><span class="label">Total Lifetime Giving</span><span class="value" style="color:var(--net-green)">$84,500</span></div>
+        <div class="ledger-title">Credits &mdash; Positive Impact</div>
+
+        <div class="ledger-section-label">Charitable Giving</div>
+        <div class="ledger-row"><span class="label">Total Lifetime Giving</span><span class="value" style="color:var(--net-green)">$84,500
+          <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>Giving breakdown</strong>Global Health: $33.3K &bull; Animal Welfare: $18.5K &bull; Existential Risk: $12K &bull; Personal/Other: $19.7K &bull; Religious: $1K. Directed to GiveWell, ACE, and EA Fund top charities.<span class="src">Personal records, 2019-2026</span></span></span>
+        </span></div>
         <div class="ledger-row ledger-sub"><span class="label">Statistical lives saved</span><span class="value" style="color:var(--health-gold)">6.7</span></div>
         <div class="ledger-row ledger-sub"><span class="label">Animals helped</span><span class="value" style="color:var(--animal-teal)">~111,000</span></div>
         <div class="ledger-row ledger-sub"><span class="label">DALYs averted</span><span class="value" style="color:var(--health-gold)">~247</span></div>
         <div class="ledger-row ledger-sub"><span class="label">X-risk giving</span><span class="value" style="color:var(--xrisk-purple)">$12,000</span></div>
-        <div class="ledger-row" style="margin-top:1rem"><span class="label">Earning-to-Give Premium</span><span class="value">$132K additional<br>capacity enabled</span></div>
-        <div class="ledger-row total"><span class="label">Net after standard offsets</span><span class="value" style="color:var(--net-green)">$80,750</span></div>
+
+        <div class="ledger-section-label">Vegetarianism</div>
+        <div class="ledger-row"><span class="label">Animals not killed (7 years)</span><span class="value" style="color:var(--animal-teal)">~200</span></div>
+        <div class="ledger-row"><span class="label">CO&#8322; avoided vs. avg diet</span><span class="value" style="color:var(--net-green)">~7t cumulative</span></div>
+
+        <div class="ledger-section-label">Career &amp; Community</div>
+        <div class="ledger-row"><span class="label">Earning-to-Give Premium</span><span class="value">$132K additional<br>capacity enabled</span></div>
+        <div class="ledger-row"><span class="label">Mission service (75 baptisms)</span><span class="value" style="color:var(--net-green)">Community value</span></div>
+        <div class="ledger-row"><span class="label">Surplus value through work</span><span class="value">$2B+ transactions</span></div>
+        <div class="ledger-row"><span class="label">Forecasting (Manifold)</span><span class="value">Public good</span></div>
+        <div class="ledger-row"><span class="label">Mentorship &amp; friendship</span><span class="value">Unquantifiable</span></div>
+
+        <div class="ledger-row total"><span class="label">Net after standard offsets</span><span class="value" style="color:var(--net-green)">$80,750+</span></div>
       </div>
     </div>
 
     <div class="net-bar-container">
-      <div class="net-bar-label">Net Impact Balance</div>
+      <div class="net-bar-label">Net Impact Balance <span class="info-toggle" onclick="this.classList.toggle('active')">?<span class="info-tooltip"><strong>How to read this</strong>Compares total charitable giving ($84.5K) against standard carbon offset costs ($3.75K). The bar shows giving as a proportion of total positive impact. Even at premium CDR rates, humanitarian impact far outweighs environmental costs.</span></span></div>
       <div class="net-bar">
         <div class="net-bar-fill" style="width:96%; background: linear-gradient(90deg, var(--net-green), var(--health-gold))"></div>
       </div>
@@ -547,12 +854,16 @@
         <span style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--carbon-red)">Offset: $3.75K</span>
         <span style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--net-green)">Giving: $84.5K</span>
       </div>
-      <p class="net-bar-note">Even at the most expensive carbon removal rates, the humanitarian impact of giving far outweighs the environmental cost of the carbon footprint that enabled it.</p>
+      <p class="net-bar-note">Even at the most expensive carbon removal rates, the humanitarian impact of giving far outweighs the environmental cost of the carbon footprint that enabled it. The moral ledger is incomplete &mdash; it excludes the unquantifiable value of community, friendship, mentorship, and the economic surplus created through work.</p>
     </div>
 
-    <!-- COMPONENT 6: METHODOLOGY -->
+    <div class="diamond-divider">
+      <span class="gwwc-diamond gwwc-diamond-sm"></span>
+    </div>
+
+    <!-- COMPONENT 7: METHODOLOGY -->
     <div class="section-divider">
-      <span class="section-num">06</span>
+      <span class="section-num">07</span>
       <h2>Methodology &amp; Confidence</h2>
     </div>
 
@@ -571,17 +882,26 @@
           <h3>Existential Risk <span class="conf-badge vlow">VERY LOW (quantified)</span></h3>
           <p>$12,000 directed toward reducing risks that could affect all future generations. The expected value argument for x-risk reduction is potentially enormous but carries fundamental uncertainty. No specific lives-saved claim is made.</p>
 
-          <h3>Carbon Footprint</h3>
+          <h3>Vegetarianism Impact <span class="conf-badge med">MEDIUM</span></h3>
+          <p>Based on USDA food availability data. Average American consumes ~225 lbs of meat per year, corresponding to roughly 25-30 land animals killed (primarily chickens). Over 7 years of vegetarianism: ~175-210 animals not killed. Does not count fish or aquatic animals. Note: still consumes eggs and dairy products, which have their own animal welfare costs (see moral ledger debits).</p>
+
+          <h3>Product Externalities <span class="conf-badge low">LOW</span></h3>
+          <p>Egg consumption (~3/week): commercial egg production involves significant hen suffering even in cage-free systems. Dairy consumption (moderate): involves cow confinement, calf separation, and resource intensity. Electronics: cobalt mining, e-waste, and labor concerns. These are rough estimates with wide uncertainty bands.</p>
+
+          <h3>Carbon Footprint <span class="conf-badge med">MEDIUM</span></h3>
           <p>Flight emissions: 0.25 kg CO&#8322; per passenger-mile (ICAO standard). ~42 round trips/year. Car: 0.42 kg/mi (EPA avg). Housing: SF grid is ~85% carbon-free. Standard offsets priced at $15/tonne (Gold Standard). Premium CDR: $100-600/tonne.</p>
 
-          <h3>Counterfactual Career</h3>
+          <h3>Counterfactual Career <span class="conf-badge med">MEDIUM</span></h3>
           <p>Without the investment banking path, estimated ~$100K/year in a generic corporate role. Over 7 years: ~$700K pre-tax vs actual $2.9M. The $2.2M earnings premium translates to ~$132K in additional giving capacity at 10% post-tax rate.</p>
 
-          <h3>Monte Carlo Projection</h3>
+          <h3>Financial Data <span class="conf-badge high">HIGH</span></h3>
+          <p>Career earnings, taxes, expenses, and savings figures are sourced directly from personal financial records tracked via the Gale Family Finances application. Career Earnings: $2.9M (pre-tax, including employer taxes &amp; benefits). Taxes: $1.0M. Living Expenses: $0.5M. Savings/Net Worth: $1.3M. Charitable Giving: $84.5K (includes 2026 YTD).</p>
+
+          <h3>Monte Carlo Projection <span class="conf-badge low">LOW-MEDIUM</span></h3>
           <p>Career trajectory probabilities: P(stays in IB to MD) = 55%, P(exits to buyside/corp dev) = 25%, P(career disruption) = 20%. Comp ranges sourced from industry surveys. Effective tax rate: 38%. Cost-effectiveness drift: +2%/year. Discount rate: 3%/year.</p>
 
           <p style="margin-top:2rem; padding-top:1rem; border-top:1px solid var(--impact-border);">
-            <strong>All impact estimates carry significant uncertainty.</strong> Global health figures use GiveWell's well-validated models. Animal welfare figures use ACE estimates with much wider confidence intervals. Existential risk impact is fundamentally speculative. Carbon calculations use standard emission factors from the EPA and ICAO.
+            <strong>All impact estimates carry significant uncertainty.</strong> Global health figures use GiveWell's well-validated models. Animal welfare figures use ACE estimates with much wider confidence intervals. Existential risk impact is fundamentally speculative. Carbon calculations use standard emission factors from the EPA and ICAO. Product externalities are rough approximations.
           </p>
           <p style="margin-top:1rem; opacity:0.5;">Last updated: February 2026. Commitment to annual refresh.</p>
         </div>
@@ -666,7 +986,7 @@
     }, { threshold: 0.3 });
     counterObserver.observe(document.querySelector('.counters'));
 
-    // ===== SANKEY DIAGRAM =====
+    // ===== SANKEY DIAGRAM (CORRECTED FINANCIAL DATA) =====
     function drawSankey() {
       const container = document.getElementById('sankey-container');
       const width = container.clientWidth;
@@ -675,11 +995,13 @@
       const svg = d3.select('#sankey-container').append('svg')
         .attr('width', width).attr('height', height);
 
+      // CORRECTED from Family Finances Excel data:
+      // Career Earnings: $2.9M, Taxes: $1.0M, Expenses: $0.5M, Savings: $1.3M, Giving: $84.5K
       const nodes = [
         { name: 'Career Earnings\n$2.9M' },      // 0
-        { name: 'Taxes\n$1.1M' },                 // 1
-        { name: 'Living Expenses\n$1.3M' },        // 2
-        { name: 'Savings\n$0.4M' },                // 3
+        { name: 'Taxes\n$1.0M' },                 // 1
+        { name: 'Savings\n$1.3M' },               // 2
+        { name: 'Living Expenses\n$0.5M' },        // 3
         { name: 'Charitable Giving\n$84.5K' },     // 4
         { name: 'Global Health\n$33.3K' },         // 5
         { name: 'Animal Welfare\n$18.5K' },        // 6
@@ -691,9 +1013,9 @@
       ];
 
       const links = [
-        { source: 0, target: 1, value: 1100 },
+        { source: 0, target: 1, value: 1000 },
         { source: 0, target: 2, value: 1300 },
-        { source: 0, target: 3, value: 415 },
+        { source: 0, target: 3, value: 500 },
         { source: 0, target: 4, value: 84.5 },
         { source: 4, target: 5, value: 33.3 },
         { source: 4, target: 6, value: 18.5 },
@@ -703,13 +1025,6 @@
         { source: 6, target: 10, value: 18.5 },
         { source: 7, target: 11, value: 12 },
       ];
-
-      const colorMap = {
-        0: '#555', 1: '#555', 2: '#555', 3: '#555',
-        4: 'var(--net-green)', 5: 'var(--health-gold)', 6: 'var(--animal-teal)',
-        7: 'var(--xrisk-purple)', 8: 'var(--personal-gray)',
-        9: 'var(--health-gold)', 10: 'var(--animal-teal)', 11: 'var(--xrisk-purple)'
-      };
 
       const sankey = d3.sankey()
         .nodeWidth(18)
@@ -721,16 +1036,16 @@
         links: links.map(d => Object.assign({}, d))
       });
 
+      const nodeColors = ['#555','#444','#22c55e','#444','#22c55e','#d4a843','#2dd4bf','#8b5cf6','#9ca3af','#d4a843','#2dd4bf','#8b5cf6'];
+      const linkColors = ['#555','#22c55e','#555','#22c55e','#d4a843','#2dd4bf','#8b5cf6','#9ca3af','#d4a843','#2dd4bf','#8b5cf6'];
+
       svg.append('g').selectAll('rect')
         .data(graph.nodes)
         .join('rect')
         .attr('x', d => d.x0).attr('y', d => d.y0)
         .attr('height', d => Math.max(d.y1 - d.y0, 1))
         .attr('width', d => d.x1 - d.x0)
-        .attr('fill', (d, i) => {
-          const colors = ['#555','#444','#444','#444','#22c55e','#d4a843','#2dd4bf','#8b5cf6','#9ca3af','#d4a843','#2dd4bf','#8b5cf6'];
-          return colors[i] || '#555';
-        })
+        .attr('fill', (d, i) => nodeColors[i] || '#555')
         .attr('opacity', 0.8);
 
       svg.append('g').selectAll('path')
@@ -738,10 +1053,7 @@
         .join('path')
         .attr('class', 'sankey-link')
         .attr('d', d3.sankeyLinkHorizontal())
-        .attr('stroke', (d) => {
-          const colors = ['#555','#555','#555','#22c55e','#d4a843','#2dd4bf','#8b5cf6','#9ca3af','#d4a843','#2dd4bf','#8b5cf6'];
-          return colors[d.index] || '#555';
-        })
+        .attr('stroke', (d) => linkColors[d.index] || '#555')
         .attr('stroke-width', d => Math.max(1, d.width));
 
       svg.append('g').selectAll('text')
