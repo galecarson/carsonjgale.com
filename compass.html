@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compass — Carson Gale</title>
+  <meta name="description" content="Compass: An AI-queryable personal CRM blending professional and personal relationship management.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0 3rem;
+    }
+    .feature-card {
+      padding: 1.5rem;
+      background: rgba(12, 36, 16, 0.5);
+      border: 1px solid rgba(90, 184, 115, 0.12);
+      border-radius: 8px;
+    }
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--canopy-pale);
+      margin-bottom: 0.5rem;
+    }
+    .feature-card p {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--canopy-light);
+      line-height: 1.6;
+      opacity: 0.8;
+    }
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin: 2rem 0;
+    }
+    .tech-tag {
+      font-family: var(--font-pixel);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      padding: 0.4rem 0.8rem;
+      background: rgba(90, 184, 115, 0.1);
+      border: 1px solid rgba(90, 184, 115, 0.2);
+      border-radius: 4px;
+      color: var(--canopy-glow);
+    }
+    .architecture-section {
+      margin: 3rem 0;
+    }
+    .architecture-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--canopy-pale);
+      margin-bottom: 1.5rem;
+    }
+    .arch-diagram {
+      padding: 2rem;
+      background: rgba(8, 16, 10, 0.6);
+      border: 1px solid rgba(90, 184, 115, 0.1);
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      color: var(--canopy-light);
+      line-height: 1.8;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .project-status {
+      display: inline-block;
+      font-family: var(--font-pixel);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.7rem;
+      border-radius: 3px;
+      margin-top: 1rem;
+    }
+    .status-active {
+      background: rgba(90, 184, 115, 0.15);
+      color: var(--canopy-glow);
+      border: 1px solid rgba(90, 184, 115, 0.3);
+    }
+    .body-text {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--canopy-light);
+      line-height: 1.8;
+      opacity: 0.85;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body class="subpage-body">
+
+  <nav class="subpage-nav">
+    <a href="index.html" class="back-link">&larr; Back to The Den</a>
+    <div class="nav-links">
+      <a href="index.html#about">About</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+
+  <div class="subpage-container">
+    <div class="subpage-header">
+      <span class="section-tag">Project</span>
+      <h1>Compass</h1>
+      <p class="subtitle">An AI-queryable personal CRM blending professional and personal relationship management with natural language queries.</p>
+      <span class="project-status status-active">Active Development</span>
+    </div>
+
+    <p class="body-text">Compass is a full-stack relationship management platform designed to unify professional and personal contacts into a single, queryable system. Instead of juggling spreadsheets, LinkedIn, and phone contacts, Compass lets you ask natural language questions about your network.</p>
+
+    <p class="body-text">Think: "Who do I know in real estate in Dallas?" or "When did I last speak with someone at Apollo?" The system uses vector embeddings and Claude AI to understand context and relationships, not just keyword matching.</p>
+
+    <div class="tech-stack">
+      <span class="tech-tag">SvelteKit</span>
+      <span class="tech-tag">FastAPI</span>
+      <span class="tech-tag">PostgreSQL</span>
+      <span class="tech-tag">pgvector</span>
+      <span class="tech-tag">Redis</span>
+      <span class="tech-tag">Claude AI</span>
+      <span class="tech-tag">Docker</span>
+      <span class="tech-tag">Tailwind CSS</span>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>Natural Language Queries</h3>
+        <p>Ask questions in plain English. The system uses Claude AI and vector similarity search to find relevant contacts and relationships.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Unified Contact Graph</h3>
+        <p>Merge professional and personal contacts into one system with rich relationship metadata, interaction history, and tags.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Interaction Tracking</h3>
+        <p>Log meetings, calls, and messages. Get reminders when relationships go cold. Surface who you should reconnect with.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Self-Hosted & Private</h3>
+        <p>Your relationship data stays on your infrastructure. Deployed via Docker Compose with Caddy reverse proxy for HTTPS.</p>
+      </div>
+    </div>
+
+    <div class="architecture-section">
+      <h2>Architecture</h2>
+      <div class="arch-diagram">
+Browser (SvelteKit)
+    |
+    v
+Caddy (Reverse Proxy / HTTPS)
+    |
+    +---> Frontend (SvelteKit, Port 5173)
+    |
+    +---> Backend (FastAPI, Port 8000)
+              |
+              +---> PostgreSQL + pgvector
+              |       (contacts, embeddings)
+              |
+              +---> Redis (session cache)
+              |
+              +---> Claude API
+                    (NL query processing)</div>
+    </div>
+
+    <p class="body-text" style="opacity: 0.5; font-size: 0.85rem; margin-top: 3rem;">Source code available on request. This project contains personal contact data and is not publicly hosted.</p>
+  </div>
+
+  <footer class="subpage-footer">
+    <p>&copy; 2026 Carson Gale. Crafted with care.</p>
+  </footer>
+
+</body>
+</html>

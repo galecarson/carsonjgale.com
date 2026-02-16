@@ -1605,3 +1605,198 @@ img { max-width: 100%; display: block; }
   white-space: nowrap;
   border-width: 0;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   SUB-PAGE SHARED STYLES
+   Used by: proposals.html, benchmarking.html, impact.html,
+            compass.html, buyer-list.html
+   ═══════════════════════════════════════════════════════════════ */
+
+.subpage-body {
+  background: var(--canopy-darkest);
+  color: var(--canopy-mist);
+  min-height: 100vh;
+}
+
+.subpage-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(8, 26, 12, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(90, 184, 115, 0.1);
+}
+
+.subpage-nav .back-link {
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--canopy-glow);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.subpage-nav .back-link:hover {
+  color: var(--canopy-pale);
+}
+
+.subpage-nav .nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.subpage-nav .nav-links a {
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--canopy-light);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.subpage-nav .nav-links a:hover {
+  color: var(--canopy-glow);
+}
+
+.subpage-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 6rem 2rem 4rem;
+}
+
+.subpage-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding-top: 2rem;
+}
+
+.subpage-header .section-tag {
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--canopy-glow);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.subpage-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 400;
+  color: var(--canopy-pale);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.subpage-header .subtitle {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--canopy-light);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+  opacity: 0.8;
+}
+
+.subpage-footer {
+  text-align: center;
+  padding: 3rem 2rem;
+  border-top: 1px solid rgba(90, 184, 115, 0.1);
+  margin-top: 4rem;
+}
+
+.subpage-footer p {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--canopy-light);
+  opacity: 0.5;
+}
+
+/* Explorations grid (sub-page links on main site) */
+.explorations-header {
+  text-align: center;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.explorations-header h3 {
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--canopy-glow);
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.explorations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+.exploration-card {
+  display: block;
+  padding: 1.5rem;
+  background: var(--surface-card);
+  border: 1px solid rgba(90, 184, 115, 0.15);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.exploration-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--canopy-glow);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.exploration-card .card-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.exploration-card h4 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--canopy-pale);
+  margin-bottom: 0.4rem;
+}
+
+.exploration-card p {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--canopy-light);
+  opacity: 0.7;
+  line-height: 1.5;
+}
+
+.exploration-card .explore-arrow {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--canopy-glow);
+  margin-top: 0.8rem;
+  display: block;
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 768px) {
+  .subpage-nav {
+    padding: 0.8rem 1rem;
+  }
+  .subpage-nav .nav-links {
+    display: none;
+  }
+  .subpage-container {
+    padding: 5rem 1.2rem 3rem;
+  }
+}

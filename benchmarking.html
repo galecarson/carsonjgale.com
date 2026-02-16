@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Benchmarking — Carson Gale</title>
+  <meta name="description" content="Personal forecasts for 44 AI capability milestones, compared against consensus predictions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      background: rgba(12, 36, 16, 0.4);
+      border: 1px solid rgba(90, 184, 115, 0.1);
+      border-radius: 8px;
+    }
+    .stat-number {
+      font-family: 'Courier New', monospace;
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--canopy-glow);
+    }
+    .stat-label {
+      font-family: var(--font-pixel);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      color: var(--canopy-light);
+      opacity: 0.6;
+      margin-top: 0.3rem;
+      text-transform: uppercase;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    .controls label {
+      font-family: var(--font-pixel);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      color: var(--canopy-light);
+      opacity: 0.6;
+      margin-right: 0.3rem;
+    }
+    .filter-btn {
+      font-family: var(--font-pixel);
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+      padding: 0.4rem 0.8rem;
+      background: transparent;
+      border: 1px solid rgba(90, 184, 115, 0.2);
+      border-radius: 4px;
+      color: var(--canopy-light);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { border-color: var(--canopy-glow); color: var(--canopy-glow); }
+    .filter-btn.active { background: rgba(90, 184, 115, 0.15); border-color: var(--canopy-glow); color: var(--canopy-glow); }
+
+    .sort-select {
+      font-family: var(--font-pixel);
+      font-size: 0.55rem;
+      letter-spacing: 0.06em;
+      padding: 0.4rem 0.8rem;
+      background: rgba(12, 36, 16, 0.6);
+      border: 1px solid rgba(90, 184, 115, 0.2);
+      border-radius: 4px;
+      color: var(--canopy-light);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .benchmark-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .benchmark-table thead th {
+      font-family: var(--font-pixel);
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+      color: var(--canopy-glow);
+      text-align: left;
+      padding: 0.8rem 0.6rem;
+      border-bottom: 1px solid rgba(90, 184, 115, 0.15);
+      text-transform: uppercase;
+      position: sticky;
+      top: 60px;
+      background: var(--canopy-darkest);
+      z-index: 5;
+      cursor: pointer;
+      user-select: none;
+    }
+    .benchmark-table thead th:hover {
+      color: var(--canopy-pale);
+    }
+    .benchmark-table tbody tr {
+      transition: background 0.2s;
+    }
+    .benchmark-table tbody tr:hover {
+      background: rgba(90, 184, 115, 0.04);
+    }
+    .benchmark-table tbody tr.hidden {
+      display: none;
+    }
+    .benchmark-table td {
+      padding: 0.7rem 0.6rem;
+      border-bottom: 1px solid rgba(90, 184, 115, 0.05);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--canopy-light);
+      vertical-align: top;
+    }
+    .item-name {
+      font-weight: 500;
+      color: var(--canopy-pale);
+      cursor: pointer;
+    }
+    .item-desc {
+      font-size: 0.78rem;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: opacity 0.3s, max-height 0.3s;
+      color: var(--canopy-light);
+      opacity: 0;
+      line-height: 1.5;
+    }
+    .item-desc.show {
+      opacity: 0.65;
+      max-height: 80px;
+      margin-top: 0.3rem;
+    }
+
+    .capability-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .cap-fill {
+      height: 6px;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+    .cap-num {
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      font-weight: bold;
+      min-width: 1.2rem;
+      text-align: right;
+    }
+    .cap-high { color: #4ade80; }
+    .cap-high .cap-fill { background: #4ade80; }
+    .cap-med { color: #fbbf24; }
+    .cap-med .cap-fill { background: #fbbf24; }
+    .cap-low { color: #f87171; }
+    .cap-low .cap-fill { background: #f87171; }
+    .cap-none { color: rgba(180,180,180,0.3); }
+    .cap-none .cap-fill { background: rgba(180,180,180,0.15); }
+
+    .forecast-cell {
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+    .forecast-o3 { color: #93c5fd; }
+    .forecast-cg { color: #c4b5fd; }
+    .forecast-na { color: rgba(180,180,180,0.25); }
+
+    .diff-earlier { color: #4ade80; font-size: 0.65rem; }
+    .diff-later { color: #f87171; font-size: 0.65rem; }
+    .diff-same { color: rgba(180,180,180,0.3); font-size: 0.65rem; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      padding: 1rem 0;
+      border-top: 1px solid rgba(90, 184, 115, 0.08);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-pixel);
+      font-size: 0.55rem;
+      letter-spacing: 0.06em;
+      color: var(--canopy-light);
+      opacity: 0.6;
+    }
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    .timeline-viz {
+      margin: 3rem 0;
+      overflow-x: auto;
+    }
+    .timeline-svg {
+      width: 100%;
+      min-width: 800px;
+    }
+
+    @media (max-width: 768px) {
+      .benchmark-table td:nth-child(4) { display: none; }
+      .benchmark-table th:nth-child(4) { display: none; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body class="subpage-body">
+
+  <nav class="subpage-nav">
+    <a href="index.html" class="back-link">&larr; Back to The Den</a>
+    <div class="nav-links">
+      <a href="index.html#about">About</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+
+  <div class="subpage-container" style="max-width: 1100px;">
+    <div class="subpage-header">
+      <span class="section-tag">~ Explorations ~</span>
+      <h1>Personal AI Benchmarking</h1>
+      <p class="subtitle">44 AI capability milestones I track personally, with current capability scores and my own forecasts compared against GPT O3's predictions. Click any item name to see its description.</p>
+    </div>
+
+    <div class="stats-row" id="statsRow">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="controls">
+      <label>Filter:</label>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="high">High (8-10)</button>
+      <button class="filter-btn" data-filter="med">Medium (5-7)</button>
+      <button class="filter-btn" data-filter="low">Low (1-4)</button>
+      <span style="flex-grow:1"></span>
+      <label>Sort:</label>
+      <select class="sort-select" id="sortSelect">
+        <option value="capability-desc">Capability (High → Low)</option>
+        <option value="capability-asc">Capability (Low → High)</option>
+        <option value="cg-forecast">CG Forecast (Soonest)</option>
+        <option value="o3-forecast">O3 Forecast (Soonest)</option>
+        <option value="name">Name (A → Z)</option>
+      </select>
+    </div>
+
+    <table class="benchmark-table">
+      <thead>
+        <tr>
+          <th style="width:24%">Benchmark Item</th>
+          <th style="width:18%">Current Capability</th>
+          <th style="width:14%">GPT O3 Forecast</th>
+          <th style="width:14%">CG Forecast</th>
+          <th style="width:10%">Delta</th>
+        </tr>
+      </thead>
+      <tbody id="benchmarkBody">
+        <!-- Populated by JS -->
+      </tbody>
+    </table>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#4ade80"></div> High (8-10)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#fbbf24"></div> Medium (5-7)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#f87171"></div> Low (1-4)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#93c5fd"></div> GPT O3 Forecast</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#c4b5fd"></div> CG Forecast</div>
+    </div>
+
+    <p style="font-family:var(--font-body); font-size:0.8rem; color:var(--canopy-light); opacity:0.35; text-align:center; margin-top:2rem;">Data sourced from personal tracking. Forecasts are speculative and updated periodically. Last updated: February 2026.</p>
+  </div>
+
+  <footer class="subpage-footer">
+    <p>&copy; 2026 Carson Gale. Crafted with care.</p>
+  </footer>
+
+  <script>
+    const benchmarkData = [
+      { name: "Email Q&A Assistant", desc: "Answer detailed questions about my emails using content understanding and summarization.", cap: 9, o3: "8/7/25", cg: "9/30/2025" },
+      { name: "Instant Meeting Summarizer", desc: "Join any call unprompted and deliver a concise, actionable summary and next steps within five minutes of meeting end.", cap: 9, o3: "8/7/25", cg: "3/31/2026" },
+      { name: "User Differentiation", desc: "Understand difference in users (me vs Max vs Emily) and personalize responses accordingly.", cap: 8, o3: "12/31/25", cg: "3/31/2026" },
+      { name: "Loved Ones Q&A", desc: "Answer questions correctly about my loved ones by recalling personal facts and context.", cap: 8, o3: "12/31/25", cg: "3/31/2026" },
+      { name: "Itemized Ride Receipts", desc: "Provide itemized Uber/Uber Eats receipts as requested by my executive assistant.", cap: 8, o3: "9/1/25", cg: "6/30/2026" },
+      { name: "Ride Price Comparator", desc: "Compare prices across ride service providers to get me the cheapest and fastest ride home.", cap: 7, o3: "10/1/25", cg: "6/30/2026" },
+      { name: "Uber Order Assistant", desc: "Order my Uber Eats and arrange Uber rides home from work seamlessly.", cap: 8, o3: "1/1/26", cg: "6/30/2026" },
+      { name: "Personalized Comedy Writer", desc: "Create a comedy sketch routine that I would find funny based on my preferences.", cap: 8, o3: "8/7/25", cg: "9/30/2026" },
+      { name: "Automated Rent Payment", desc: "Pay rent every month, selecting the right account based on balances and budgeting.", cap: 8, o3: "9/1/25", cg: "9/30/2026" },
+      { name: "Personal Shopper", desc: "Act as a personalized shopper on Amazon, Facebook Marketplace, and other platforms.", cap: 7, o3: "1/1/26", cg: "12/31/2026" },
+      { name: "Quality Content Recommender", desc: "Proactively recommend high-quality content that I enjoy.", cap: 6, o3: "3/1/26", cg: "12/31/2026" },
+      { name: "Personalized Video Creator", desc: "Generate high-quality, personalized video content tailored to my interests.", cap: 7, o3: "6/1/26", cg: "12/31/2026" },
+      { name: "Networking Advisor", desc: "Find the right people for me to network with by analyzing professional and personal networks.", cap: 7, o3: "12/1/25", cg: "3/31/2027" },
+      { name: "Social Calendar Optimizer", desc: "Schedule dinners and virtual calls that maximize network strength subject to my energy budget.", cap: 8, o3: "12/31/25", cg: "3/31/2027" },
+      { name: "Relationship Nudger", desc: "Detect over two months of silence with close contacts and draft high-context re-engagement messages.", cap: 8, o3: "12/31/25", cg: "3/31/2027" },
+      { name: "AI Blood-Screen Sentinel", desc: "Annual (or quarterly) multi-cancer blood test; flags tumors when still microscopic.", cap: null, o3: null, cg: "6/30/2028" },
+      { name: "Investment Manager", desc: "Execute trades and find target investments on my behalf while managing risk.", cap: 6, o3: "12/31/26", cg: "6/30/2027" },
+      { name: "Credit-Card Game Theorist", desc: "Pick the optimal card for each purchase, forecast bonus timelines, and send alerts before downgrades or closures.", cap: 7, o3: "12/31/26", cg: "6/30/2027" },
+      { name: "Minimum Balance Monitor", desc: "Maintain minimum cash balance on my card by monitoring spending and topping up when needed.", cap: 6, o3: "1/1/27", cg: "6/30/2027" },
+      { name: "AI Adult Content Creator", desc: ">50% of adult content I consume is AI-generated.", cap: null, o3: null, cg: "6/30/2027" },
+      { name: "Real-Time Nutritionist", desc: "Track intake via photos or voice and keep macros on target while respecting vegetarian constraints.", cap: 6, o3: "6/1/26", cg: "6/30/2028" },
+      { name: "VR Worlds Creator", desc: "Enable incredible virtual worlds in virtual reality for immersive experiences.", cap: 8, o3: "7/1/26", cg: "6/30/2028" },
+      { name: "Financial Overview Updater", desc: "Update my annual finances, summarizing income, expenses, and investments.", cap: 7, o3: "12/31/25", cg: "12/31/2028" },
+      { name: "Tax Filing Assistant", desc: "Prepare and file my taxes accurately based on my financial data.", cap: 7, o3: "1/1/26", cg: "12/31/2028" },
+      { name: "Multilingual Archivist", desc: "Transcribe, translate, and tag all voice notes, videos, and documents into a searchable knowledge graph.", cap: 7, o3: "6/1/26", cg: "12/31/2028" },
+      { name: "Exercise Coach", desc: "Monitor my exercise patterns and proactively suggest optimal activities.", cap: 6, o3: "6/1/26", cg: "12/31/2028" },
+      { name: "Sleep Architect", desc: "Adjust lighting, temperature, and notifications to raise average sleep quality.", cap: 6, o3: "6/1/26", cg: "12/31/2028" },
+      { name: "Life Tracker", desc: "Create detailed trackers of my life using video and other inputs.", cap: 6, o3: "12/31/26", cg: "12/31/2028" },
+      { name: "Contextual Memory Oracle", desc: "Recall past promises, events, and details on demand with citation of supporting artifacts.", cap: 6, o3: "12/31/26", cg: "12/31/2028" },
+      { name: "AI Music", desc: "25%+ music I listen to is primarily AI-generated.", cap: null, o3: null, cg: "12/31/2028" },
+      { name: "Personalized Doctor", desc: "Serve as a personalized doctor providing proactive and positive health suggestions.", cap: 5, o3: "1/1/29", cg: "1/1/2029" },
+      { name: "Land Revenue Generator", desc: "Create revenue from my land by identifying and managing income-generating opportunities.", cap: 4, o3: "1/1/28", cg: "1/1/2030" },
+      { name: "Personalized Microbiome Optimizer", desc: "AI analyzes gut DNA/RNA and recommends diet or targeted synbiotics.", cap: null, o3: null, cg: "1/1/2030" },
+      { name: "Autonomous Grocery Robot", desc: "Keep pantry inventory and autonomously order restocks when supplies are low.", cap: 5, o3: "1/1/30", cg: "1/1/2031" },
+      { name: "Personal Emulator", desc: "Simulate me so convincingly that my closest friends and relatives can't tell the difference.", cap: 3, o3: "1/1/35", cg: "1/1/2031" },
+      { name: "Accelerated Wire Transfers", desc: "Facilitate free wire transfers 10x faster than current banking systems allow.", cap: 5, o3: "1/1/27", cg: "1/1/2033" },
+      { name: "Coffee Maker", desc: "Make and bring me coffee autonomously with robotics.", cap: 4, o3: "1/1/30", cg: "1/1/2033" },
+      { name: "Vegetarian Meal Chef", desc: "Make me a delicious vegetarian meal using kitchen robotics.", cap: 4, o3: "1/1/30", cg: "1/1/2035" },
+      { name: "Bathroom Cleaner", desc: "Clean the bathroom thoroughly using autonomous robotics.", cap: 4, o3: "6/1/31", cg: "1/1/2035" },
+      { name: "Hot Tub Maintainer", desc: "Maintain my hot tub's water chemistry and cleanliness automatically.", cap: 4, o3: "6/1/32", cg: "1/1/2035" },
+      { name: "Baby Caregiver", desc: "Reliably care for a baby including feeding, changing, and soothing.", cap: 3, o3: "12/1/33", cg: "1/1/2037" },
+      { name: "Personal Aircraft", desc: "Provide a personal aircraft capable of autonomous or semi-autonomous flight.", cap: 3, o3: "1/1/35", cg: "1/1/2040" },
+      { name: "Affordable Space Flight", desc: "Flight to space for the equivalent of <$100k.", cap: 1, o3: null, cg: "1/1/2045" },
+      { name: "Life Extension", desc: "Extend my life by 50 years in expectation through health and biotechnological interventions.", cap: 2, o3: "1/1/75", cg: "8/7/2025" }
+    ];
+
+    function parseDate(str) {
+      if (!str) return null;
+      const d = new Date(str);
+      return isNaN(d) ? null : d;
+    }
+
+    function formatDate(str) {
+      if (!str) return "—";
+      const d = parseDate(str);
+      if (!d) return "—";
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      return months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    function capClass(c) {
+      if (c === null || c === undefined) return "cap-none";
+      if (c >= 8) return "cap-high";
+      if (c >= 5) return "cap-med";
+      return "cap-low";
+    }
+
+    function capFilter(c) {
+      if (c === null || c === undefined) return "none";
+      if (c >= 8) return "high";
+      if (c >= 5) return "med";
+      return "low";
+    }
+
+    function getDelta(o3Str, cgStr) {
+      const o3 = parseDate(o3Str);
+      const cg = parseDate(cgStr);
+      if (!o3 || !cg) return { text: "—", cls: "diff-same" };
+      const diffMonths = Math.round((cg - o3) / (1000 * 60 * 60 * 24 * 30));
+      if (Math.abs(diffMonths) < 3) return { text: "~Same", cls: "diff-same" };
+      if (diffMonths < 0) {
+        const yrs = Math.abs(Math.round(diffMonths / 12));
+        const mo = Math.abs(diffMonths) % 12;
+        return { text: yrs > 0 ? `${yrs}y earlier` : `${mo}mo earlier`, cls: "diff-earlier" };
+      }
+      const yrs = Math.round(diffMonths / 12);
+      const mo = diffMonths % 12;
+      return { text: yrs > 0 ? `${yrs}y later` : `${mo}mo later`, cls: "diff-later" };
+    }
+
+    // Stats
+    function computeStats() {
+      const withCap = benchmarkData.filter(d => d.cap !== null);
+      const avgCap = (withCap.reduce((s, d) => s + d.cap, 0) / withCap.length).toFixed(1);
+
+      let earlier = 0, later = 0, same = 0;
+      benchmarkData.forEach(d => {
+        const delta = getDelta(d.o3, d.cg);
+        if (delta.cls === "diff-earlier") earlier++;
+        else if (delta.cls === "diff-later") later++;
+      });
+
+      document.getElementById("statsRow").innerHTML = `
+        <div class="stat-card"><div class="stat-number">${benchmarkData.length}</div><div class="stat-label">Benchmarks Tracked</div></div>
+        <div class="stat-card"><div class="stat-number">${avgCap}</div><div class="stat-label">Avg Capability (1-10)</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:#4ade80">${earlier}</div><div class="stat-label">CG Predicts Earlier</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:#f87171">${later}</div><div class="stat-label">CG Predicts Later</div></div>
+      `;
+    }
+
+    // Render table
+    function renderTable(data) {
+      const tbody = document.getElementById("benchmarkBody");
+      tbody.innerHTML = data.map((d, i) => {
+        const cc = capClass(d.cap);
+        const capW = d.cap ? (d.cap * 10) : 0;
+        const delta = getDelta(d.o3, d.cg);
+        return `<tr data-filter="${capFilter(d.cap)}" data-idx="${i}">
+          <td>
+            <div class="item-name" onclick="toggleDesc(this)">${d.name}</div>
+            <div class="item-desc">${d.desc}</div>
+          </td>
+          <td>
+            <div class="capability-bar ${cc}">
+              <span class="cap-num">${d.cap !== null ? d.cap : '—'}</span>
+              <div class="cap-fill" style="width:${capW}%;height:6px;min-width:2px;max-width:80px"></div>
+            </div>
+          </td>
+          <td class="forecast-cell ${d.o3 ? 'forecast-o3' : 'forecast-na'}">${formatDate(d.o3)}</td>
+          <td class="forecast-cell ${d.cg ? 'forecast-cg' : 'forecast-na'}">${formatDate(d.cg)}</td>
+          <td class="${delta.cls}">${delta.text}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    function toggleDesc(el) {
+      const desc = el.nextElementSibling;
+      desc.classList.toggle("show");
+    }
+
+    // Filter
+    let currentFilter = "all";
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentFilter = btn.dataset.filter;
+        applyFilter();
+      });
+    });
+
+    function applyFilter() {
+      document.querySelectorAll("#benchmarkBody tr").forEach(tr => {
+        if (currentFilter === "all") {
+          tr.classList.remove("hidden");
+        } else {
+          tr.classList.toggle("hidden", tr.dataset.filter !== currentFilter);
+        }
+      });
+    }
+
+    // Sort
+    function sortData(sortKey) {
+      const sorted = [...benchmarkData];
+      switch (sortKey) {
+        case "capability-desc":
+          sorted.sort((a, b) => (b.cap || 0) - (a.cap || 0));
+          break;
+        case "capability-asc":
+          sorted.sort((a, b) => (a.cap || 0) - (b.cap || 0));
+          break;
+        case "cg-forecast":
+          sorted.sort((a, b) => {
+            const da = parseDate(a.cg), db = parseDate(b.cg);
+            if (!da && !db) return 0;
+            if (!da) return 1;
+            if (!db) return -1;
+            return da - db;
+          });
+          break;
+        case "o3-forecast":
+          sorted.sort((a, b) => {
+            const da = parseDate(a.o3), db = parseDate(b.o3);
+            if (!da && !db) return 0;
+            if (!da) return 1;
+            if (!db) return -1;
+            return da - db;
+          });
+          break;
+        case "name":
+          sorted.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+      }
+      renderTable(sorted);
+      applyFilter();
+    }
+
+    document.getElementById("sortSelect").addEventListener("change", (e) => {
+      sortData(e.target.value);
+    });
+
+    // Init
+    computeStats();
+    sortData("capability-desc");
+  </script>
+
+</body>
+</html>

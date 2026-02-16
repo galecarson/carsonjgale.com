@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buyer List Engine — Carson Gale</title>
+  <meta name="description" content="Buyer List Engine: A Python scoring engine for secondary market transactions with multi-factor buyer-fund compatibility analysis.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0 3rem;
+    }
+    .feature-card {
+      padding: 1.5rem;
+      background: rgba(12, 36, 16, 0.5);
+      border: 1px solid rgba(196, 168, 130, 0.12);
+      border-radius: 8px;
+    }
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--amber-light);
+      margin-bottom: 0.5rem;
+    }
+    .feature-card p {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--canopy-light);
+      line-height: 1.6;
+      opacity: 0.8;
+    }
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin: 2rem 0;
+    }
+    .tech-tag {
+      font-family: var(--font-pixel);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      padding: 0.4rem 0.8rem;
+      background: rgba(196, 160, 96, 0.1);
+      border: 1px solid rgba(196, 160, 96, 0.2);
+      border-radius: 4px;
+      color: var(--amber);
+    }
+    .scoring-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+    }
+    .scoring-table th {
+      font-family: var(--font-pixel);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--amber);
+      text-align: left;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(196, 160, 96, 0.2);
+      text-transform: uppercase;
+    }
+    .scoring-table td {
+      padding: 0.7rem 1rem;
+      color: var(--canopy-light);
+      border-bottom: 1px solid rgba(90, 184, 115, 0.06);
+      opacity: 0.8;
+    }
+    .scoring-table tr:hover td {
+      opacity: 1;
+      background: rgba(196, 160, 96, 0.03);
+    }
+    .section-title-sm {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--canopy-pale);
+      margin: 3rem 0 1.5rem;
+    }
+    .project-status {
+      display: inline-block;
+      font-family: var(--font-pixel);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.7rem;
+      border-radius: 3px;
+      margin-top: 1rem;
+    }
+    .status-production {
+      background: rgba(196, 160, 96, 0.15);
+      color: var(--amber);
+      border: 1px solid rgba(196, 160, 96, 0.3);
+    }
+    .body-text {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--canopy-light);
+      line-height: 1.8;
+      opacity: 0.85;
+      margin-bottom: 1.5rem;
+    }
+    .output-example {
+      padding: 1.5rem 2rem;
+      background: rgba(8, 16, 10, 0.6);
+      border: 1px solid rgba(196, 160, 96, 0.1);
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      color: var(--canopy-light);
+      line-height: 1.7;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+  </style>
+</head>
+<body class="subpage-body">
+
+  <nav class="subpage-nav">
+    <a href="index.html" class="back-link">&larr; Back to The Den</a>
+    <div class="nav-links">
+      <a href="index.html#about">About</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+
+  <div class="subpage-container">
+    <div class="subpage-header">
+      <span class="section-tag">Project</span>
+      <h1>Buyer List Engine</h1>
+      <p class="subtitle">A Python scoring engine for secondary market transactions &mdash; multi-factor buyer-fund compatibility analysis with ranked recommendations.</p>
+      <span class="project-status status-production">In Production</span>
+    </div>
+
+    <p class="body-text">In the LP secondaries market, matching the right buyer to the right fund interest is part art, part science. The Buyer List Engine automates the science part: it ingests fund characteristics and buyer preferences, scores compatibility across multiple dimensions, and produces ranked buyer lists for each transaction.</p>
+
+    <p class="body-text">The engine replaces hours of manual spreadsheet work with a systematic, repeatable process that ensures no strong buyer-fund match gets overlooked.</p>
+
+    <div class="tech-stack">
+      <span class="tech-tag">Python 3</span>
+      <span class="tech-tag">Pandas</span>
+      <span class="tech-tag">openpyxl</span>
+      <span class="tech-tag">NumPy</span>
+    </div>
+
+    <h2 class="section-title-sm">Scoring Factors</h2>
+
+    <table class="scoring-table">
+      <thead>
+        <tr>
+          <th>Factor</th>
+          <th>Weight</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Strategy Match</td>
+          <td>High</td>
+          <td>Buyer's target strategies vs. fund strategy classification</td>
+        </tr>
+        <tr>
+          <td>Geography Fit</td>
+          <td>High</td>
+          <td>Buyer's geographic preferences vs. fund's regional focus</td>
+        </tr>
+        <tr>
+          <td>Vintage Preference</td>
+          <td>Medium</td>
+          <td>Buyer's preferred vintage years vs. fund vintage</td>
+        </tr>
+        <tr>
+          <td>Size Compatibility</td>
+          <td>Medium</td>
+          <td>Buyer's check size range vs. estimated transaction size</td>
+        </tr>
+        <tr>
+          <td>GP Relationship</td>
+          <td>Medium</td>
+          <td>Buyer's existing relationships with the fund's GP</td>
+        </tr>
+        <tr>
+          <td>Historical Activity</td>
+          <td>Low</td>
+          <td>Buyer's past transaction volume and close rate</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title-sm">Sample Output</h2>
+
+    <div class="output-example">Fund: Acme Growth Partners IV (2020 vintage, Growth Equity, NA)
+Transaction Size: ~$25M LP interest
+
+Rank  Buyer                  Score   Strategy  Geo  Size  Notes
+----  ---------------------  -----   --------  ---  ----  ----------------
+  1   Alpha Secondaries       94     10/10     9    9     Active buyer, GP rel.
+  2   Bravo Capital           91     10/10     8    9     Strong vintage fit
+  3   Charlie Partners        87      9/10     9    7     Smaller check size
+  4   Delta Investments       83      8/10     8    8     New to GP
+  5   Echo Fund Solutions     79      8/10     7    8     Geography stretch
+ ...  (continues)             ...</div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>Excel In, Excel Out</h3>
+        <p>Ingests buyer preference data and fund details from Excel workbooks. Outputs formatted, presentation-ready ranked buyer lists.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Configurable Weights</h3>
+        <p>Scoring weights are adjustable per transaction. Override defaults when you know a specific factor matters more for a particular deal.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Buyer Universe Expansion</h3>
+        <p>Companion tool to expand the buyer universe by identifying new potential buyers based on strategy overlap and market activity.</p>
+      </div>
+    </div>
+
+    <p class="body-text" style="opacity: 0.5; font-size: 0.85rem; margin-top: 3rem;">Source code available on request. This tool processes proprietary market data and is used in production workflows.</p>
+  </div>
+
+  <footer class="subpage-footer">
+    <p>&copy; 2026 Carson Gale. Crafted with care.</p>
+  </footer>
+
+</body>
+</html>

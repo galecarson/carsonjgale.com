@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Policy Proposals — Carson Gale</title>
+  <meta name="description" content="Carson Gale's specific proposals for legislative and tax policy change at the federal, state, and local level.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Jurisdiction accent colors */
+    .jurisdiction-federal { --accent: #5b8dd9; --accent-dim: rgba(91, 141, 217, 0.12); }
+    .jurisdiction-california { --accent: #d4a843; --accent-dim: rgba(212, 168, 67, 0.12); }
+    .jurisdiction-sf { --accent: #2dd4bf; --accent-dim: rgba(45, 212, 191, 0.12); }
+    .jurisdiction-tax { --accent: #c4a060; --accent-dim: rgba(196, 160, 96, 0.12); }
+
+    .jurisdiction-section {
+      margin-bottom: 4rem;
+    }
+
+    .jurisdiction-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(90, 184, 115, 0.1);
+    }
+
+    .jurisdiction-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 400;
+      color: var(--canopy-pale);
+    }
+
+    .jurisdiction-badge {
+      font-family: var(--font-pixel);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 3px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .topic-group {
+      margin-bottom: 2.5rem;
+    }
+
+    .topic-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      padding-left: 0.5rem;
+      border-left: 2px solid var(--accent);
+    }
+
+    .proposal-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .proposal-item {
+      padding: 1rem 1.2rem;
+      background: rgba(12, 36, 16, 0.4);
+      border: 1px solid rgba(90, 184, 115, 0.08);
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--canopy-light);
+      line-height: 1.7;
+      transition: border-color 0.3s;
+    }
+
+    .proposal-item:hover {
+      border-color: var(--accent);
+    }
+
+    .proposal-item strong {
+      color: var(--canopy-pale);
+      font-weight: 500;
+    }
+
+    .proposal-sub {
+      margin-top: 0.5rem;
+      padding-left: 1rem;
+      font-size: 0.82rem;
+      opacity: 0.75;
+      line-height: 1.6;
+    }
+
+    .proposal-sub li {
+      list-style: none;
+      position: relative;
+      padding-left: 0.8rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .proposal-sub li::before {
+      content: "\2013";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      opacity: 0.5;
+    }
+
+    .guiding-note {
+      margin-top: 0.8rem;
+      padding: 0.8rem 1rem;
+      background: rgba(90, 184, 115, 0.04);
+      border-left: 2px solid rgba(90, 184, 115, 0.15);
+      border-radius: 0 4px 4px 0;
+      font-size: 0.82rem;
+      opacity: 0.7;
+      font-style: italic;
+    }
+
+    .disclaimer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 1.5rem;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: var(--canopy-light);
+      opacity: 0.4;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .jurisdiction-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body class="subpage-body">
+
+  <nav class="subpage-nav">
+    <a href="index.html" class="back-link">&larr; Back to The Den</a>
+    <div class="nav-links">
+      <a href="index.html#about">About</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+
+  <div class="subpage-container">
+    <div class="subpage-header">
+      <span class="section-tag">~ Explorations ~</span>
+      <h1>Policy Proposals</h1>
+      <p class="subtitle">Specific proposals for legislative and tax policy change. These represent my personal views on what I believe would make the world a better place. They are earnest, sometimes unconventional, and always evolving.</p>
+    </div>
+
+    <!-- US FEDERAL -->
+    <div class="jurisdiction-section jurisdiction-federal">
+      <div class="jurisdiction-header">
+        <h2>United States Federal Legislation</h2>
+        <span class="jurisdiction-badge">Federal</span>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Animal Welfare</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">Pass nationwide legislation to ban or restrict intensive confinement practices for farm animals in the US.</li>
+          <li class="proposal-item">Impose import restrictions on animal products from outside the US that do not meet these restrictions.</li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Restricted Substances</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">
+            <strong>Modifications to the Controlled Substances Act:</strong>
+            <ul class="proposal-sub">
+              <li>Reclassify tobacco as Schedule I or II</li>
+              <li>Reclassify marijuana, LSD, psilocybin, and MDMA to more lax classification or deschedule entirely</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">United States Sovereign Wealth Fund</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">Economists, policy experts, and political leaders would develop a detailed proposal outlining the goals, structure, and potential benefits of a U.S. sovereign wealth fund.</li>
+          <li class="proposal-item">Congress should pass legislation to establish SWF, funding via debt issuance and tax revenue (as applicable).</li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Prediction Markets</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">
+            CFTC to legalize prediction markets:
+            <ul class="proposal-sub">
+              <li>Grant no action letter to existing prediction markets</li>
+              <li>Amend Event Contract regulation to be less sweeping and permit more markets</li>
+              <li>Potentially create a new Designated Contract Market classification to govern prediction markets</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CALIFORNIA -->
+    <div class="jurisdiction-section jurisdiction-california">
+      <div class="jurisdiction-header">
+        <h2>California Legislation</h2>
+        <span class="jurisdiction-badge">State</span>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Licensing</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">California Board of Barbering and Cosmetology should remove licensure requirement to operate as a barber.</li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Decriminalize Sex Work</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">State legislature or citizen-led ballot initiative should be created to decriminalize sex work in California.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SAN FRANCISCO -->
+    <div class="jurisdiction-section jurisdiction-sf">
+      <div class="jurisdiction-header">
+        <h2>San Francisco Legislation</h2>
+        <span class="jurisdiction-badge">Local</span>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Public Safety</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">Expand funding for police force.</li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Infrastructure</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">Hamstring the California Environmental Quality Act (CEQA), which significantly restricts new building developments.</li>
+          <li class="proposal-item">
+            Relax SF zoning code, increasing the permissions to build higher-density, larger housing structures with fewer area restrictions.
+            <ul class="proposal-sub">
+              <li>Eliminate single-family zoning entirely</li>
+            </ul>
+          </li>
+          <li class="proposal-item">Reduce or eliminate public hearings for developments that comply with zoning laws.</li>
+          <li class="proposal-item">Eliminate parking requirements for buildings.</li>
+          <li class="proposal-item">San Francisco Airport Commission should work at an accelerated pace to create infrastructure for self-driving vehicles.</li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Miscellaneous</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">SF Health Code should remove requirement for massage therapists to have California Massage Therapy Council (CAMTC) licensure.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TAXATION -->
+    <div class="jurisdiction-section jurisdiction-tax">
+      <div class="jurisdiction-header">
+        <h2>Taxation</h2>
+        <span class="jurisdiction-badge">Tax Policy</span>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">General Changes</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item"><strong>Direct File System:</strong> After responding to questions, the IRS should tell citizens how much tax they owe.</li>
+          <li class="proposal-item"><strong>Go After Tax Fraud More Vigorously:</strong> Utilize AI and other technologies to chase and prosecute tax fraud.</li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Individual Income Tax</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">
+            <strong>Universal Basic Income:</strong> Drop bottom tax rate negative, to a maximum benefit of ~$3,000 annually.
+            <ul class="proposal-sub">
+              <li>Doesn't phase out by income &mdash; applies to everyone</li>
+              <li>Provides incentive for everyone to complete tax return, providing more data</li>
+              <li>Decline in tax revenue offset by increases in top marginal tax rates</li>
+              <li>Fine with EITC as a replacement; prefer the structure of UBI, particularly as society gets more wealthy</li>
+            </ul>
+          </li>
+          <li class="proposal-item">Drop next several levels of tax brackets by ~50% for income under ~$100k.</li>
+          <li class="proposal-item">Increase remaining tax brackets, with top marginal rate of 50%.</li>
+          <li class="proposal-item"><strong>Mortgage Interest Deduction:</strong> Remove ability to write off mortgage interest expense over $25k or on 2nd homes / investment properties.</li>
+          <li class="proposal-item"><strong>Retirement Accounts:</strong> Remove backdoor and mega-backdoor permissions.</li>
+        </ul>
+        <div class="guiding-note">
+          <strong>Guiding Thoughts:</strong> Eliminates deadweight tax loss of job market, incentivizes making money. Individual income tax represents ~50% of government revenue, so want to be careful about dropping main income source. BUT suspect this would not change tax revenue drastically since the top 50% of taxpayers already pay 97% of income taxes. Reduces incentive for crime &mdash; you can just earn more money in a job and not worth the risk.
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Corporate Income Taxes</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">Remove PTP (Publicly Traded Partnership) restrictions.</li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Capital Gains Tax</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">Eliminate step up in basis for heirs upon death of principal asset-holder.</li>
+          <li class="proposal-item">
+            <strong>Maybe:</strong> Index cost basis of capital gains to inflation (at least partially).
+            <ul class="proposal-sub">
+              <li>Would support this if new tax policy indicated it could be done simply</li>
+              <li>As of now it seems complicated and maybe not ideal</li>
+              <li>UK tried this and gave it up; Israel still does it</li>
+            </ul>
+          </li>
+          <li class="proposal-item">
+            Support implementing limited tax on unrealized capital gains.
+            <ul class="proposal-sub">
+              <li>Only applies to unrealized gains that have held balance sheet value for 5+ years</li>
+              <li>Tax can be paid immediately or accrues interest rate (maybe 5%) upon realization</li>
+              <li>Only applies to individuals with net worth above ultra-rich threshold, like $50M+</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">New Ownership Tax</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">Land Value Tax.</li>
+          <li class="proposal-item">
+            Common Ownership Self-Assessed Tax (COST):
+            <ul class="proposal-sub">
+              <li>Only applies for assets &gt;$100k</li>
+              <li>Exempts primary home below $5M, retirement accounts, essential business assets</li>
+              <li>Asset owner can impose reasonable restrictions on the buyer of the asset (e.g., competitive restrictions, etc.)</li>
+              <li>Reassessment applies annually</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="topic-group">
+        <h3 class="topic-title">Consumption Taxes</h3>
+        <ul class="proposal-list">
+          <li class="proposal-item">Implement 10% VAT, excepting essential goods.</li>
+          <li class="proposal-item">Implement $25 per ton carbon tax.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="disclaimer">These proposals reflect my personal views as of February 2026. They are not financial, legal, or political advice. I reserve the right to change my mind about any of these as I learn more.</p>
+  </div>
+
+  <footer class="subpage-footer">
+    <p>&copy; 2026 Carson Gale. Crafted with care.</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impact Estimator — Carson Gale</title>
+  <meta name="description" content="Tracking the real-world impact of earning-to-give: statistical lives saved, animals helped, and lifetime projections.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+  <style>
+    :root {
+      --impact-bg: #0a0a0a;
+      --impact-surface: #111111;
+      --impact-border: rgba(255,255,255,0.06);
+      --impact-text: #e0e0e0;
+      --impact-text-dim: #888;
+      --impact-text-bright: #f5f5f5;
+      --health-gold: #d4a843;
+      --health-gold-dim: rgba(212,168,67,0.15);
+      --animal-teal: #2dd4bf;
+      --animal-teal-dim: rgba(45,212,191,0.15);
+      --xrisk-purple: #8b5cf6;
+      --xrisk-purple-dim: rgba(139,92,246,0.15);
+      --carbon-red: #ef4444;
+      --carbon-red-dim: rgba(239,68,68,0.12);
+      --net-green: #22c55e;
+      --net-green-dim: rgba(34,197,94,0.12);
+      --personal-gray: #9ca3af;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--impact-bg);
+      color: var(--impact-text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Nav */
+    .impact-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--impact-border);
+    }
+    .impact-nav a {
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--impact-text-dim);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .impact-nav a:hover { color: var(--net-green); }
+    .impact-nav .nav-right { display: flex; gap: 1.5rem; }
+
+    /* Container */
+    .impact-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 7rem 2rem 4rem;
+    }
+
+    /* Hero */
+    .impact-hero {
+      text-align: center;
+      margin-bottom: 5rem;
+      padding: 3rem 0;
+    }
+    .impact-hero .tag {
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--net-green);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    .impact-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 400;
+      color: var(--impact-text-bright);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+    .impact-hero .intro {
+      max-width: 650px;
+      margin: 0 auto;
+      font-size: 0.95rem;
+      color: var(--impact-text-dim);
+      line-height: 1.8;
+    }
+    .impact-hero .intro a {
+      color: var(--net-green);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Counters */
+    .counters {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--impact-border);
+      border: 1px solid var(--impact-border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 3rem 0 5rem;
+    }
+    .counter-cell {
+      background: var(--impact-surface);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+    .counter-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .counter-label {
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--impact-text-dim);
+      margin-bottom: 0.3rem;
+    }
+    .counter-source {
+      font-size: 0.72rem;
+      color: var(--impact-text-dim);
+      opacity: 0.6;
+      margin-top: 0.5rem;
+    }
+    .confidence {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.45rem;
+      letter-spacing: 0.08em;
+      margin-top: 0.5rem;
+    }
+    .conf-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+    .conf-high { background: #4ade80; }
+    .conf-med { background: #fbbf24; }
+    .conf-low { background: #f87171; }
+
+    /* Section headers */
+    .section-divider {
+      margin: 5rem 0 2.5rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--impact-border);
+    }
+    .section-divider h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--impact-text-bright);
+    }
+    .section-divider .section-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--impact-text-dim);
+      opacity: 0.4;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+
+    /* Sankey */
+    #sankey-container {
+      width: 100%;
+      min-height: 400px;
+      margin: 2rem 0;
+    }
+    #sankey-container svg {
+      width: 100%;
+    }
+    .sankey-node text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      fill: var(--impact-text);
+    }
+    .sankey-link {
+      fill: none;
+      stroke-opacity: 0.3;
+    }
+    .sankey-link:hover {
+      stroke-opacity: 0.6;
+    }
+
+    /* Timeline */
+    .timeline-chart {
+      width: 100%;
+      margin: 2rem 0;
+      overflow-x: auto;
+    }
+    .timeline-chart svg {
+      width: 100%;
+      min-width: 600px;
+    }
+
+    /* Fan Chart */
+    #fanchart-container {
+      width: 100%;
+      margin: 2rem 0;
+    }
+    .fan-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+      padding: 1.2rem;
+      background: var(--impact-surface);
+      border: 1px solid var(--impact-border);
+      border-radius: 6px;
+    }
+    .fan-control {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .fan-control label {
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      color: var(--impact-text-dim);
+      text-transform: uppercase;
+    }
+    .fan-control select, .fan-control input[type=range] {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: var(--impact-bg);
+      border: 1px solid var(--impact-border);
+      color: var(--impact-text);
+      padding: 0.4rem;
+      border-radius: 4px;
+    }
+    .fan-control .range-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--net-green);
+    }
+
+    /* Moral Ledger */
+    .ledger {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--impact-border);
+      border: 1px solid var(--impact-border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 2rem 0;
+    }
+    .ledger-col {
+      background: var(--impact-surface);
+      padding: 2rem;
+    }
+    .ledger-title {
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--impact-border);
+    }
+    .ledger-debit .ledger-title { color: var(--carbon-red); }
+    .ledger-credit .ledger-title { color: var(--net-green); }
+    .ledger-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      font-size: 0.85rem;
+    }
+    .ledger-row .label { color: var(--impact-text-dim); }
+    .ledger-row .value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .ledger-row.total {
+      border-top: 2px double var(--impact-border);
+      margin-top: 0.8rem;
+      padding-top: 0.8rem;
+      font-weight: 500;
+    }
+    .ledger-row.total .value { color: var(--impact-text-bright); }
+    .ledger-sub {
+      padding-left: 1rem;
+      font-size: 0.78rem;
+      opacity: 0.6;
+    }
+
+    .net-bar-container {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: var(--impact-surface);
+      border: 1px solid var(--impact-border);
+      border-radius: 8px;
+    }
+    .net-bar-label {
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      color: var(--impact-text-dim);
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    .net-bar {
+      height: 24px;
+      background: var(--impact-bg);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .net-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s ease;
+    }
+    .net-bar-note {
+      font-size: 0.8rem;
+      color: var(--impact-text-dim);
+      margin-top: 1rem;
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    /* Methodology */
+    .methodology {
+      margin: 3rem 0;
+    }
+    .method-toggle {
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--impact-text-dim);
+      background: transparent;
+      border: 1px solid var(--impact-border);
+      padding: 0.6rem 1.2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: block;
+      width: 100%;
+      text-align: left;
+    }
+    .method-toggle:hover { border-color: var(--impact-text-dim); }
+    .method-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+    .method-content.open {
+      max-height: 3000px;
+    }
+    .method-inner {
+      padding: 2rem 0;
+      font-size: 0.85rem;
+      color: var(--impact-text-dim);
+      line-height: 1.8;
+    }
+    .method-inner h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      color: var(--impact-text);
+      margin: 2rem 0 0.8rem;
+    }
+    .method-inner h3:first-child { margin-top: 0; }
+    .conf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      margin-left: 0.5rem;
+    }
+    .conf-badge.high { background: rgba(74,222,128,0.12); color: #4ade80; }
+    .conf-badge.med { background: rgba(251,191,36,0.12); color: #fbbf24; }
+    .conf-badge.low { background: rgba(248,113,113,0.12); color: #f87171; }
+    .conf-badge.vlow { background: rgba(248,113,113,0.08); color: #f87171; opacity: 0.7; }
+
+    /* Footer */
+    .impact-footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--impact-border);
+      margin-top: 4rem;
+    }
+    .impact-footer p {
+      font-family: 'Silkscreen', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      color: var(--impact-text-dim);
+      opacity: 0.4;
+    }
+
+    @media (max-width: 768px) {
+      .counters { grid-template-columns: 1fr; }
+      .ledger { grid-template-columns: 1fr; }
+      .impact-container { padding: 5rem 1.2rem 3rem; }
+      .impact-nav { padding: 0.8rem 1rem; }
+      .impact-nav .nav-right { display: none; }
+      .fan-controls { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="impact-nav">
+    <a href="index.html">&larr; Back to The Den</a>
+    <div class="nav-right">
+      <a href="index.html#about">About</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+
+  <div class="impact-container">
+
+    <!-- HERO -->
+    <div class="impact-hero">
+      <span class="tag">Personal Impact Estimator</span>
+      <h1>How Much Good<br>Can One Career Do?</h1>
+      <p class="intro">I'm a member of <a href="https://www.givingwhatwecan.org/" target="_blank" rel="noopener">Giving What We Can</a>, pledging 10% of my post-tax income to the most effective charities I can find. This page tracks the estimated real-world impact of that commitment &mdash; openly, with real numbers, explicit methodology, and honest uncertainty.</p>
+    </div>
+
+    <!-- COMPONENT 1: HERO COUNTERS -->
+    <div class="counters">
+      <div class="counter-cell">
+        <div class="counter-value" style="color:var(--health-gold)" id="counter-lives">0</div>
+        <div class="counter-label">Statistical Lives Saved</div>
+        <div class="counter-source">via $33.3K to GiveWell top charities</div>
+        <div class="confidence"><div class="conf-dot conf-high"></div> MEDIUM-HIGH</div>
+      </div>
+      <div class="counter-cell">
+        <div class="counter-value" style="color:var(--animal-teal)" id="counter-animals">0</div>
+        <div class="counter-label">Animals with Improved Conditions</div>
+        <div class="counter-source">via $18.5K to ACE-recommended charities</div>
+        <div class="confidence"><div class="conf-dot conf-med"></div> LOW-MEDIUM</div>
+      </div>
+      <div class="counter-cell">
+        <div class="counter-value" style="color:var(--health-gold)" id="counter-dalys">0</div>
+        <div class="counter-label">DALYs Averted</div>
+        <div class="counter-source">from global health giving</div>
+        <div class="confidence"><div class="conf-dot conf-high"></div> MEDIUM-HIGH</div>
+      </div>
+    </div>
+
+    <!-- COMPONENT 2: SANKEY DIAGRAM -->
+    <div class="section-divider">
+      <span class="section-num">02</span>
+      <h2>Career to Impact</h2>
+    </div>
+    <div id="sankey-container"></div>
+
+    <!-- COMPONENT 3: GIVING TIMELINE -->
+    <div class="section-divider">
+      <span class="section-num">03</span>
+      <h2>Giving Timeline</h2>
+    </div>
+    <div class="timeline-chart" id="timeline-container"></div>
+
+    <!-- COMPONENT 4: MONTE CARLO FAN CHART -->
+    <div class="section-divider">
+      <span class="section-num">04</span>
+      <h2>Lifetime Projection</h2>
+    </div>
+    <div class="fan-controls">
+      <div class="fan-control">
+        <label>Giving Rate</label>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <input type="range" id="givingRate" min="5" max="20" value="10" step="5">
+          <span class="range-value" id="givingRateVal">10%</span>
+        </div>
+      </div>
+      <div class="fan-control">
+        <label>View</label>
+        <select id="fanView">
+          <option value="giving">Total Giving ($)</option>
+          <option value="lives">Lives Saved</option>
+          <option value="animals">Animals Helped</option>
+        </select>
+      </div>
+      <div class="fan-control">
+        <label>Career Track</label>
+        <select id="careerTrack">
+          <option value="base">Base Case</option>
+          <option value="conservative">Conservative</option>
+          <option value="optimistic">Optimistic</option>
+        </select>
+      </div>
+    </div>
+    <div id="fanchart-container"></div>
+
+    <!-- COMPONENT 5: MORAL LEDGER -->
+    <div class="section-divider">
+      <span class="section-num">05</span>
+      <h2>Moral Ledger</h2>
+    </div>
+
+    <div class="ledger">
+      <div class="ledger-col ledger-debit">
+        <div class="ledger-title">Debits &mdash; Environmental Cost</div>
+        <div class="ledger-row"><span class="label">Annual Carbon Footprint</span><span class="value" style="color:var(--carbon-red)">~46 t CO&#8322;</span></div>
+        <div class="ledger-row ledger-sub"><span class="label">Flights (80%)</span><span class="value">36.8t</span></div>
+        <div class="ledger-row ledger-sub"><span class="label">Food &amp; goods (13%)</span><span class="value">6.0t</span></div>
+        <div class="ledger-row ledger-sub"><span class="label">Housing (4%)</span><span class="value">2.0t</span></div>
+        <div class="ledger-row ledger-sub"><span class="label">Car (2%)</span><span class="value">0.9t</span></div>
+        <div class="ledger-row" style="margin-top:1rem"><span class="label">vs. US Average</span><span class="value">16t (2.9&times;)</span></div>
+        <div class="ledger-row"><span class="label">Career cumulative</span><span class="value">~250t</span></div>
+        <div class="ledger-row total"><span class="label">Offset cost (standard)</span><span class="value" style="color:var(--carbon-red)">$3,750</span></div>
+        <div class="ledger-row"><span class="label">Offset cost (premium CDR)</span><span class="value">$25K&ndash;$150K</span></div>
+      </div>
+      <div class="ledger-col ledger-credit">
+        <div class="ledger-title">Credits &mdash; Giving Impact</div>
+        <div class="ledger-row"><span class="label">Total Lifetime Giving</span><span class="value" style="color:var(--net-green)">$84,500</span></div>
+        <div class="ledger-row ledger-sub"><span class="label">Statistical lives saved</span><span class="value" style="color:var(--health-gold)">6.7</span></div>
+        <div class="ledger-row ledger-sub"><span class="label">Animals helped</span><span class="value" style="color:var(--animal-teal)">~111,000</span></div>
+        <div class="ledger-row ledger-sub"><span class="label">DALYs averted</span><span class="value" style="color:var(--health-gold)">~247</span></div>
+        <div class="ledger-row ledger-sub"><span class="label">X-risk giving</span><span class="value" style="color:var(--xrisk-purple)">$12,000</span></div>
+        <div class="ledger-row" style="margin-top:1rem"><span class="label">Earning-to-Give Premium</span><span class="value">$132K additional<br>capacity enabled</span></div>
+        <div class="ledger-row total"><span class="label">Net after standard offsets</span><span class="value" style="color:var(--net-green)">$80,750</span></div>
+      </div>
+    </div>
+
+    <div class="net-bar-container">
+      <div class="net-bar-label">Net Impact Balance</div>
+      <div class="net-bar">
+        <div class="net-bar-fill" style="width:96%; background: linear-gradient(90deg, var(--net-green), var(--health-gold))"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:0.5rem;">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--carbon-red)">Offset: $3.75K</span>
+        <span style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--net-green)">Giving: $84.5K</span>
+      </div>
+      <p class="net-bar-note">Even at the most expensive carbon removal rates, the humanitarian impact of giving far outweighs the environmental cost of the carbon footprint that enabled it.</p>
+    </div>
+
+    <!-- COMPONENT 6: METHODOLOGY -->
+    <div class="section-divider">
+      <span class="section-num">06</span>
+      <h2>Methodology &amp; Confidence</h2>
+    </div>
+
+    <div class="methodology">
+      <button class="method-toggle" onclick="this.nextElementSibling.classList.toggle('open'); this.textContent = this.nextElementSibling.classList.contains('open') ? '- COLLAPSE METHODOLOGY' : '+ EXPAND METHODOLOGY'">+ EXPAND METHODOLOGY</button>
+      <div class="method-content">
+        <div class="method-inner">
+
+          <h3>Global Health Impact <span class="conf-badge high">MEDIUM-HIGH</span></h3>
+          <p>Based on GiveWell's 2022-2024 blended cost-effectiveness estimates. Conservative blended estimate: $5,000 per statistical life saved (accounts for imperfect optimization and rising costs). GiveWell's methodology is the gold standard in EA cost-effectiveness analysis.</p>
+          <p>Sources: GiveWell top charity cost-effectiveness analyses for Malaria Consortium (~$4,000/life), Against Malaria Foundation (~$4,500/life), Helen Keller Intl (~$3,500/life), New Incentives (~$4,500/life).</p>
+
+          <h3>Animal Welfare Impact <span class="conf-badge low">LOW-MEDIUM</span></h3>
+          <p>Based on ACE estimates and THL's 2024 self-analysis. Central estimate: ~6 animals per dollar (discounted from ACE's 11-14 range). These are almost entirely chickens/hens via corporate cage-free campaign work. The range spans nearly an order of magnitude (37K-259K animals) &mdash; treat with significant uncertainty.</p>
+
+          <h3>Existential Risk <span class="conf-badge vlow">VERY LOW (quantified)</span></h3>
+          <p>$12,000 directed toward reducing risks that could affect all future generations. The expected value argument for x-risk reduction is potentially enormous but carries fundamental uncertainty. No specific lives-saved claim is made.</p>
+
+          <h3>Carbon Footprint</h3>
+          <p>Flight emissions: 0.25 kg CO&#8322; per passenger-mile (ICAO standard). ~42 round trips/year. Car: 0.42 kg/mi (EPA avg). Housing: SF grid is ~85% carbon-free. Standard offsets priced at $15/tonne (Gold Standard). Premium CDR: $100-600/tonne.</p>
+
+          <h3>Counterfactual Career</h3>
+          <p>Without the investment banking path, estimated ~$100K/year in a generic corporate role. Over 7 years: ~$700K pre-tax vs actual $2.9M. The $2.2M earnings premium translates to ~$132K in additional giving capacity at 10% post-tax rate.</p>
+
+          <h3>Monte Carlo Projection</h3>
+          <p>Career trajectory probabilities: P(stays in IB to MD) = 55%, P(exits to buyside/corp dev) = 25%, P(career disruption) = 20%. Comp ranges sourced from industry surveys. Effective tax rate: 38%. Cost-effectiveness drift: +2%/year. Discount rate: 3%/year.</p>
+
+          <p style="margin-top:2rem; padding-top:1rem; border-top:1px solid var(--impact-border);">
+            <strong>All impact estimates carry significant uncertainty.</strong> Global health figures use GiveWell's well-validated models. Animal welfare figures use ACE estimates with much wider confidence intervals. Existential risk impact is fundamentally speculative. Carbon calculations use standard emission factors from the EPA and ICAO.
+          </p>
+          <p style="margin-top:1rem; opacity:0.5;">Last updated: February 2026. Commitment to annual refresh.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="impact-footer">
+    <p>&copy; 2026 Carson Gale. Crafted with care.</p>
+  </footer>
+
+  <script>
+    // ===== DATA =====
+    const givingHistory = {
+      years: [2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
+      personal:     [0, 0, 7500, 10200, -1000, 0, 3000, 0],
+      globalHealth:  [0, 0, 3000, 15000, 0, 300, 9000, 6000],
+      animalWelfare: [0, 0, 6000, 3000, 0, 9500, 0, 0],
+      xRisk:         [0, 0, 0, 3000, 9000, 0, 0, 0],
+      religious:     [0, 0, 0, 0, 0, 0, 1000, 0]
+    };
+
+    const projectionData = {
+      currentAge: 31, endAge: 65, pastGiving: 84500, pastLivesSaved: 6.7, pastAnimalsHelped: 111000,
+      annualGiving: [
+        [32,28000,35000,42000,52000,65000],[33,30000,38000,45000,56000,70000],
+        [34,33000,42000,52000,65000,82000],[35,35000,46000,56000,72000,92000],
+        [36,37000,49000,60000,78000,100000],[37,38000,51000,63000,82000,106000],
+        [38,40000,55000,72000,100000,140000],[39,41000,56000,74000,104000,148000],
+        [40,42000,58000,78000,110000,155000],[41,43000,60000,80000,115000,165000],
+        [42,44000,62000,85000,125000,180000],[43,45000,63000,87000,128000,185000],
+        [44,45500,64000,88000,130000,190000],[45,46000,65000,90000,135000,200000],
+        [46,45000,63000,88000,130000,195000],[47,44000,62000,86000,126000,188000],
+        [48,43500,61000,84000,122000,180000],[49,43000,60000,83000,120000,176000],
+        [50,42000,60000,82000,120000,175000],[51,41000,58000,80000,116000,170000],
+        [52,40000,57000,78000,113000,165000],[53,39500,56000,76000,110000,160000],
+        [54,39000,55000,74000,108000,155000],[55,38000,54000,72000,105000,150000],
+        [56,37000,52000,70000,102000,146000],[57,36500,51000,69000,100000,142000],
+        [58,36000,50000,68000,98000,140000],[59,35500,49500,67000,97000,138000],
+        [60,34000,48000,65000,95000,135000],[61,33000,47000,63000,93000,132000],
+        [62,32000,45000,62000,90000,128000],[63,31000,44000,60000,88000,125000],
+        [64,30500,43000,59000,86000,122000],[65,30000,42000,58000,85000,120000]
+      ],
+      costPerLifeSaved: 5000, animalsPerDollar: 6, dalysPerLife: 37
+    };
+
+    // ===== COUNTER ANIMATION =====
+    function animateCounter(id, target, decimals = 0, prefix = '', suffix = '') {
+      const el = document.getElementById(id);
+      const duration = 2000;
+      const start = performance.now();
+
+      function step(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
+
+        if (decimals > 0) {
+          el.textContent = prefix + current.toFixed(decimals) + suffix;
+        } else if (target >= 1000) {
+          el.textContent = prefix + '~' + Math.round(current).toLocaleString() + suffix;
+        } else {
+          el.textContent = prefix + Math.round(current).toLocaleString() + suffix;
+        }
+
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    // IntersectionObserver for counters
+    let countersAnimated = false;
+    const counterObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !countersAnimated) {
+        countersAnimated = true;
+        animateCounter('counter-lives', 6.7, 1);
+        animateCounter('counter-animals', 111000);
+        animateCounter('counter-dalys', 247);
+      }
+    }, { threshold: 0.3 });
+    counterObserver.observe(document.querySelector('.counters'));
+
+    // ===== SANKEY DIAGRAM =====
+    function drawSankey() {
+      const container = document.getElementById('sankey-container');
+      const width = container.clientWidth;
+      const height = 420;
+
+      const svg = d3.select('#sankey-container').append('svg')
+        .attr('width', width).attr('height', height);
+
+      const nodes = [
+        { name: 'Career Earnings\n$2.9M' },      // 0
+        { name: 'Taxes\n$1.1M' },                 // 1
+        { name: 'Living Expenses\n$1.3M' },        // 2
+        { name: 'Savings\n$0.4M' },                // 3
+        { name: 'Charitable Giving\n$84.5K' },     // 4
+        { name: 'Global Health\n$33.3K' },         // 5
+        { name: 'Animal Welfare\n$18.5K' },        // 6
+        { name: 'X-Risk\n$12K' },                  // 7
+        { name: 'Personal/Other\n$20.7K' },        // 8
+        { name: '6.7 Lives Saved\n247 DALYs' },   // 9
+        { name: '~111K Animals\nHelped' },         // 10
+        { name: 'Expected Value:\nSpeculative' },  // 11
+      ];
+
+      const links = [
+        { source: 0, target: 1, value: 1100 },
+        { source: 0, target: 2, value: 1300 },
+        { source: 0, target: 3, value: 415 },
+        { source: 0, target: 4, value: 84.5 },
+        { source: 4, target: 5, value: 33.3 },
+        { source: 4, target: 6, value: 18.5 },
+        { source: 4, target: 7, value: 12 },
+        { source: 4, target: 8, value: 20.7 },
+        { source: 5, target: 9, value: 33.3 },
+        { source: 6, target: 10, value: 18.5 },
+        { source: 7, target: 11, value: 12 },
+      ];
+
+      const colorMap = {
+        0: '#555', 1: '#555', 2: '#555', 3: '#555',
+        4: 'var(--net-green)', 5: 'var(--health-gold)', 6: 'var(--animal-teal)',
+        7: 'var(--xrisk-purple)', 8: 'var(--personal-gray)',
+        9: 'var(--health-gold)', 10: 'var(--animal-teal)', 11: 'var(--xrisk-purple)'
+      };
+
+      const sankey = d3.sankey()
+        .nodeWidth(18)
+        .nodePadding(14)
+        .extent([[1, 10], [width - 1, height - 10]]);
+
+      const graph = sankey({
+        nodes: nodes.map(d => Object.assign({}, d)),
+        links: links.map(d => Object.assign({}, d))
+      });
+
+      svg.append('g').selectAll('rect')
+        .data(graph.nodes)
+        .join('rect')
+        .attr('x', d => d.x0).attr('y', d => d.y0)
+        .attr('height', d => Math.max(d.y1 - d.y0, 1))
+        .attr('width', d => d.x1 - d.x0)
+        .attr('fill', (d, i) => {
+          const colors = ['#555','#444','#444','#444','#22c55e','#d4a843','#2dd4bf','#8b5cf6','#9ca3af','#d4a843','#2dd4bf','#8b5cf6'];
+          return colors[i] || '#555';
+        })
+        .attr('opacity', 0.8);
+
+      svg.append('g').selectAll('path')
+        .data(graph.links)
+        .join('path')
+        .attr('class', 'sankey-link')
+        .attr('d', d3.sankeyLinkHorizontal())
+        .attr('stroke', (d) => {
+          const colors = ['#555','#555','#555','#22c55e','#d4a843','#2dd4bf','#8b5cf6','#9ca3af','#d4a843','#2dd4bf','#8b5cf6'];
+          return colors[d.index] || '#555';
+        })
+        .attr('stroke-width', d => Math.max(1, d.width));
+
+      svg.append('g').selectAll('text')
+        .data(graph.nodes)
+        .join('text')
+        .attr('x', d => d.x0 < width / 2 ? d.x1 + 8 : d.x0 - 8)
+        .attr('y', d => (d.y0 + d.y1) / 2)
+        .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
+        .attr('dominant-baseline', 'middle')
+        .style('font-family', "'JetBrains Mono', monospace")
+        .style('font-size', '9.5px')
+        .style('fill', 'var(--impact-text-dim)')
+        .each(function(d) {
+          const lines = d.name.split('\n');
+          const text = d3.select(this);
+          lines.forEach((line, i) => {
+            text.append('tspan')
+              .attr('x', d.x0 < width / 2 ? d.x1 + 8 : d.x0 - 8)
+              .attr('dy', i === 0 ? -(lines.length - 1) * 6 : 12)
+              .text(line);
+          });
+        });
+    }
+
+    drawSankey();
+
+    // ===== GIVING TIMELINE =====
+    function drawTimeline() {
+      const container = document.getElementById('timeline-container');
+      const width = Math.max(container.clientWidth, 600);
+      const height = 320;
+      const margin = { top: 30, right: 40, bottom: 40, left: 50 };
+
+      const svg = d3.select('#timeline-container').append('svg')
+        .attr('width', width).attr('height', height)
+        .attr('viewBox', `0 0 ${width} ${height}`);
+
+      const years = givingHistory.years;
+      const categories = [
+        { key: 'personal', color: '#9ca3af', label: 'Personal/Other' },
+        { key: 'globalHealth', color: '#d4a843', label: 'Global Health' },
+        { key: 'animalWelfare', color: '#2dd4bf', label: 'Animal Welfare' },
+        { key: 'xRisk', color: '#8b5cf6', label: 'X-Risk' },
+        { key: 'religious', color: '#666', label: 'Religious/Other' }
+      ];
+
+      const x = d3.scaleBand().domain(years).range([margin.left, width - margin.right]).padding(0.3);
+      const stackData = years.map((y, i) => {
+        const d = { year: y };
+        categories.forEach(c => { d[c.key] = Math.max(0, givingHistory[c.key][i]); });
+        return d;
+      });
+
+      const stack = d3.stack().keys(categories.map(c => c.key));
+      const series = stack(stackData);
+
+      const yMax = d3.max(series[series.length - 1], d => d[1]);
+      const y = d3.scaleLinear().domain([0, yMax * 1.1]).range([height - margin.bottom, margin.top]);
+
+      // Bars
+      series.forEach((s, si) => {
+        svg.append('g').selectAll('rect')
+          .data(s)
+          .join('rect')
+          .attr('x', d => x(d.data.year))
+          .attr('y', d => y(d[1]))
+          .attr('height', d => y(d[0]) - y(d[1]))
+          .attr('width', x.bandwidth())
+          .attr('fill', categories[si].color)
+          .attr('opacity', 0.75)
+          .attr('rx', 2);
+      });
+
+      // Cumulative line
+      let cumulative = 0;
+      const cumData = years.map((yr, i) => {
+        categories.forEach(c => { cumulative += Math.max(0, givingHistory[c.key][i]); });
+        return { year: yr, total: cumulative };
+      });
+
+      const y2 = d3.scaleLinear().domain([0, cumData[cumData.length - 1].total * 1.1]).range([height - margin.bottom, margin.top]);
+
+      const line = d3.line()
+        .x(d => x(d.year) + x.bandwidth() / 2)
+        .y(d => y2(d.total))
+        .curve(d3.curveMonotoneX);
+
+      svg.append('path').datum(cumData)
+        .attr('fill', 'none').attr('stroke', '#22c55e').attr('stroke-width', 2)
+        .attr('stroke-dasharray', '4,2')
+        .attr('d', line);
+
+      cumData.forEach(d => {
+        svg.append('circle')
+          .attr('cx', x(d.year) + x.bandwidth() / 2)
+          .attr('cy', y2(d.total))
+          .attr('r', 3).attr('fill', '#22c55e');
+      });
+
+      // Axes
+      svg.append('g')
+        .attr('transform', `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x).tickFormat(d => d))
+        .selectAll('text').style('fill', 'var(--impact-text-dim)').style('font-size', '10px');
+
+      svg.append('g')
+        .attr('transform', `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y).ticks(5).tickFormat(d => '$' + (d / 1000) + 'K'))
+        .selectAll('text').style('fill', 'var(--impact-text-dim)').style('font-size', '10px');
+
+      svg.selectAll('.domain, .tick line').attr('stroke', 'rgba(255,255,255,0.08)');
+
+      // Legend
+      const legend = svg.append('g').attr('transform', `translate(${margin.left + 10}, ${margin.top - 10})`);
+      categories.forEach((c, i) => {
+        const g = legend.append('g').attr('transform', `translate(${i * 100}, 0)`);
+        g.append('rect').attr('width', 8).attr('height', 8).attr('fill', c.color).attr('opacity', 0.75).attr('rx', 1);
+        g.append('text').attr('x', 12).attr('y', 8).text(c.label)
+          .style('font-size', '8px').style('fill', 'var(--impact-text-dim)');
+      });
+    }
+
+    drawTimeline();
+
+    // ===== FAN CHART =====
+    function drawFanChart() {
+      const container = document.getElementById('fanchart-container');
+      container.innerHTML = '';
+      const width = container.clientWidth || 900;
+      const height = 400;
+      const margin = { top: 20, right: 30, bottom: 40, left: 65 };
+
+      const givingRateMultiplier = parseFloat(document.getElementById('givingRate').value) / 10;
+      const view = document.getElementById('fanView').value;
+      const career = document.getElementById('careerTrack').value;
+
+      let careerMult = 1;
+      if (career === 'conservative') careerMult = 0.65;
+      if (career === 'optimistic') careerMult = 1.4;
+
+      const data = projectionData.annualGiving.map(row => {
+        const [age, p10, p25, p50, p75, p90] = row;
+        const mult = givingRateMultiplier * careerMult;
+        return { age, p10: p10 * mult, p25: p25 * mult, p50: p50 * mult, p75: p75 * mult, p90: p90 * mult };
+      });
+
+      // Build cumulative
+      let cum = { p10: projectionData.pastGiving, p25: projectionData.pastGiving, p50: projectionData.pastGiving, p75: projectionData.pastGiving, p90: projectionData.pastGiving };
+      const cumData = [{ age: 31, ...cum }];
+
+      data.forEach(d => {
+        cum = { p10: cum.p10 + d.p10, p25: cum.p25 + d.p25, p50: cum.p50 + d.p50, p75: cum.p75 + d.p75, p90: cum.p90 + d.p90 };
+        cumData.push({ age: d.age, ...cum });
+      });
+
+      // Convert based on view
+      let ylabel = 'Cumulative Giving ($)';
+      let fmt = d => '$' + (d / 1000000).toFixed(1) + 'M';
+      if (view === 'lives') {
+        ylabel = 'Statistical Lives Saved';
+        fmt = d => d.toFixed(0);
+        cumData.forEach(d => {
+          ['p10','p25','p50','p75','p90'].forEach(k => { d[k] = d[k] / projectionData.costPerLifeSaved; });
+        });
+      } else if (view === 'animals') {
+        ylabel = 'Animals Helped';
+        fmt = d => (d / 1000000).toFixed(1) + 'M';
+        cumData.forEach(d => {
+          ['p10','p25','p50','p75','p90'].forEach(k => { d[k] = d[k] * projectionData.animalsPerDollar * 0.6; });
+        });
+      }
+
+      const svg = d3.select('#fanchart-container').append('svg')
+        .attr('width', width).attr('height', height)
+        .attr('viewBox', `0 0 ${width} ${height}`);
+
+      const x = d3.scaleLinear().domain([31, 65]).range([margin.left, width - margin.right]);
+      const yMax = d3.max(cumData, d => d.p90);
+      const y = d3.scaleLinear().domain([0, yMax * 1.05]).range([height - margin.bottom, margin.top]);
+
+      // P10-P90 band
+      const area90 = d3.area()
+        .x(d => x(d.age)).y0(d => y(d.p10)).y1(d => y(d.p90))
+        .curve(d3.curveMonotoneX);
+      svg.append('path').datum(cumData)
+        .attr('fill', 'rgba(34,197,94,0.08)').attr('d', area90);
+
+      // P25-P75 band
+      const area75 = d3.area()
+        .x(d => x(d.age)).y0(d => y(d.p25)).y1(d => y(d.p75))
+        .curve(d3.curveMonotoneX);
+      svg.append('path').datum(cumData)
+        .attr('fill', 'rgba(34,197,94,0.15)').attr('d', area75);
+
+      // P50 line
+      const line = d3.line().x(d => x(d.age)).y(d => y(d.p50)).curve(d3.curveMonotoneX);
+      svg.append('path').datum(cumData)
+        .attr('fill', 'none').attr('stroke', '#22c55e').attr('stroke-width', 2.5).attr('d', line);
+
+      // Current position dot
+      svg.append('circle')
+        .attr('cx', x(31)).attr('cy', y(cumData[0].p50))
+        .attr('r', 5).attr('fill', '#22c55e')
+        .append('animate')
+        .attr('attributeName', 'r').attr('values', '4;6;4')
+        .attr('dur', '2s').attr('repeatCount', 'indefinite');
+
+      // Labels
+      const last = cumData[cumData.length - 1];
+      ['p10','p50','p90'].forEach(k => {
+        svg.append('text')
+          .attr('x', x(65) + 5).attr('y', y(last[k]))
+          .style('font-family', "'JetBrains Mono', monospace")
+          .style('font-size', '9px')
+          .style('fill', k === 'p50' ? '#22c55e' : 'rgba(255,255,255,0.3)')
+          .text(k.toUpperCase());
+      });
+
+      // Axes
+      svg.append('g')
+        .attr('transform', `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x).ticks(7).tickFormat(d => 'Age ' + d))
+        .selectAll('text').style('fill', 'var(--impact-text-dim)').style('font-size', '10px');
+
+      svg.append('g')
+        .attr('transform', `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y).ticks(5).tickFormat(fmt))
+        .selectAll('text').style('fill', 'var(--impact-text-dim)').style('font-size', '10px');
+
+      svg.selectAll('.domain, .tick line').attr('stroke', 'rgba(255,255,255,0.06)');
+    }
+
+    drawFanChart();
+
+    // Fan chart controls
+    document.getElementById('givingRate').addEventListener('input', function() {
+      document.getElementById('givingRateVal').textContent = this.value + '%';
+      drawFanChart();
+    });
+    document.getElementById('fanView').addEventListener('change', drawFanChart);
+    document.getElementById('careerTrack').addEventListener('change', drawFanChart);
+  </script>
+
+</body>
+</html>
