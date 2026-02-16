@@ -4,26 +4,78 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Den — A Personal Corner of the Web</title>
-  <meta name="description" content="A quiet personal space for writings, projects, and thoughts.">
+  <meta name="description" content="A quiet personal space for writings, projects, and thoughts — descending through the Amazon rainforest.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Fireflies / Particles -->
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SHARED SVG DEFINITIONS                                 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <svg class="svg-defs" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+    <defs>
+      <filter id="shadow-soft" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+      </filter>
+      <filter id="glow-warm" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/>
+        <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.7  0 0 0 0 0.2  0 0 0 0.5 0" result="c"/>
+        <feMerge><feMergeNode in="c"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="bio-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/>
+        <feColorMatrix in="b" type="matrix" values="0 0 0 0 0.2  0 0 0 0 0.8  0 0 0 0 0.5  0 0 0 0.5 0" result="c"/>
+        <feMerge><feMergeNode in="c"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <!-- Macaw gradients -->
+      <linearGradient id="macaw-red" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ee3030"/><stop offset="100%" stop-color="#c01818"/>
+      </linearGradient>
+      <linearGradient id="macaw-blue" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#2070dd"/><stop offset="100%" stop-color="#1848a0"/>
+      </linearGradient>
+      <linearGradient id="macaw-yellow" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ffe040"/><stop offset="100%" stop-color="#e0b020"/>
+      </linearGradient>
+      <!-- Toucan -->
+      <linearGradient id="toucan-beak" x1="0" y1="0" x2="1" y2="0.5">
+        <stop offset="0%" stop-color="#ff6020"/><stop offset="40%" stop-color="#ffe030"/><stop offset="70%" stop-color="#40cc40"/><stop offset="100%" stop-color="#2060e0"/>
+      </linearGradient>
+      <!-- Jaguar -->
+      <linearGradient id="jaguar-body" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e0a840"/><stop offset="50%" stop-color="#c89030"/><stop offset="100%" stop-color="#a07020"/>
+      </linearGradient>
+      <!-- Tree frog -->
+      <radialGradient id="frog-body" cx="50%" cy="40%" r="55%">
+        <stop offset="0%" stop-color="#44dd44"/><stop offset="100%" stop-color="#208820"/>
+      </radialGradient>
+      <!-- Sloth -->
+      <radialGradient id="sloth-body" cx="50%" cy="40%" r="55%">
+        <stop offset="0%" stop-color="#b8a088"/><stop offset="100%" stop-color="#887060"/>
+      </radialGradient>
+      <!-- River dolphin -->
+      <linearGradient id="dolphin-body" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#d898a8"/><stop offset="50%" stop-color="#c07888"/><stop offset="100%" stop-color="#a86878"/>
+      </linearGradient>
+      <!-- Piranha -->
+      <linearGradient id="piranha-body" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#607880"/><stop offset="60%" stop-color="#506068"/><stop offset="100%" stop-color="#cc3030"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- Fireflies / particles (JS-generated) -->
   <div class="fireflies" aria-hidden="true"></div>
 
-  <!-- Underwater caustic light overlay -->
-  <div class="caustics-overlay" aria-hidden="true"></div>
-
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- HEADER / NAVIGATION                        -->
-  <!-- ═══════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- HEADER / NAVIGATION                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
   <header class="site-header">
     <nav class="nav" role="navigation" aria-label="Main navigation">
       <a href="#hero" class="nav-logo" aria-label="Home">
-        <!-- Pixel-art tree icon -->
         <svg class="logo-icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
           <rect x="14" y="22" width="4" height="8" fill="#8B6F47"/>
           <rect x="10" y="16" width="12" height="6" fill="#2D5A3D"/>
@@ -34,22 +86,10 @@
         <span class="logo-text">The Den</span>
       </a>
       <div class="nav-links">
-        <a href="#about" class="nav-link">
-          <svg class="nav-icon" viewBox="0 0 16 16" width="16" height="16"><rect x="3" y="2" width="10" height="2" fill="currentColor"/><rect x="5" y="5" width="6" height="1" fill="currentColor"/><rect x="5" y="7" width="8" height="1" fill="currentColor"/><rect x="5" y="9" width="5" height="1" fill="currentColor"/><rect x="2" y="1" width="1" height="12" fill="currentColor"/><rect x="13" y="1" width="1" height="12" fill="currentColor"/><rect x="2" y="13" width="12" height="1" fill="currentColor"/></svg>
-          About
-        </a>
-        <a href="#writings" class="nav-link">
-          <svg class="nav-icon" viewBox="0 0 16 16" width="16" height="16"><rect x="2" y="1" width="12" height="1" fill="currentColor"/><rect x="1" y="2" width="1" height="12" fill="currentColor"/><rect x="14" y="2" width="1" height="12" fill="currentColor"/><rect x="2" y="14" width="12" height="1" fill="currentColor"/><rect x="4" y="4" width="8" height="1" fill="currentColor"/><rect x="4" y="6" width="6" height="1" fill="currentColor"/><rect x="4" y="8" width="7" height="1" fill="currentColor"/><rect x="4" y="10" width="5" height="1" fill="currentColor"/></svg>
-          Writings
-        </a>
-        <a href="#projects" class="nav-link">
-          <svg class="nav-icon" viewBox="0 0 16 16" width="16" height="16"><rect x="1" y="3" width="6" height="1" fill="currentColor"/><rect x="1" y="4" width="14" height="1" fill="currentColor"/><rect x="1" y="5" width="1" height="9" fill="currentColor"/><rect x="14" y="5" width="1" height="9" fill="currentColor"/><rect x="1" y="14" width="14" height="1" fill="currentColor"/></svg>
-          Projects
-        </a>
-        <a href="#contact" class="nav-link">
-          <svg class="nav-icon" viewBox="0 0 16 16" width="16" height="16"><rect x="1" y="3" width="14" height="1" fill="currentColor"/><rect x="1" y="4" width="1" height="9" fill="currentColor"/><rect x="14" y="4" width="1" height="9" fill="currentColor"/><rect x="1" y="13" width="14" height="1" fill="currentColor"/><rect x="2" y="5" width="2" height="1" fill="currentColor"/><rect x="12" y="5" width="2" height="1" fill="currentColor"/><rect x="4" y="6" width="2" height="1" fill="currentColor"/><rect x="10" y="6" width="2" height="1" fill="currentColor"/><rect x="6" y="7" width="4" height="1" fill="currentColor"/></svg>
-          Contact
-        </a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#writings" class="nav-link">Writings</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#contact" class="nav-link">Contact</a>
       </div>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -57,45 +97,51 @@
     </nav>
   </header>
 
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- HERO SECTION                                -->
-  <!-- ═══════════════════════════════════════════ -->
-  <section id="hero" class="hero">
-    <div class="hero-scene" aria-hidden="true">
-      <!-- Forest Layer -->
-      <div class="scene-forest">
-        <div class="tree tree-1"></div>
-        <div class="tree tree-2"></div>
-        <div class="tree tree-3"></div>
-        <div class="tree tree-4"></div>
-        <div class="tree tree-5"></div>
-        <div class="moss-ground"></div>
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- LAYER 1: SKY — Hero Section                            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section id="hero" class="env-layer layer-sky">
+    <div class="env-bg" aria-hidden="true">
+      <!-- Clouds -->
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+      <div class="cloud cloud-3"></div>
+      <!-- Macaw flying across sky -->
+      <div class="animal macaw" data-tilt="14">
+        <svg class="animal-svg" viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg">
+          <g class="shadow-layer" filter="url(#shadow-soft)" opacity="0.25" transform="translate(3,5)">
+            <ellipse cx="60" cy="45" rx="35" ry="18" fill="#000"/>
+          </g>
+          <g class="body-layer">
+            <!-- Body -->
+            <ellipse cx="60" cy="45" rx="32" ry="16" fill="url(#macaw-red)"/>
+            <!-- Head -->
+            <circle cx="92" cy="40" r="12" fill="url(#macaw-red)"/>
+            <!-- Eye ring (white) -->
+            <circle cx="96" cy="38" r="5" fill="#f8f4f0" opacity="0.9"/>
+            <!-- Eye -->
+            <circle cx="97" cy="38" r="2.5" fill="#1a1a1a"/>
+            <circle cx="97.8" cy="37.2" r="0.8" fill="#fff"/>
+            <!-- Beak -->
+            <path d="M103 38 Q110 40 108 44 Q104 46 100 42 Z" fill="#1a1a1a"/>
+            <path d="M103 40 Q108 42 106 44 Q103 45 101 42 Z" fill="#333"/>
+          </g>
+          <g class="detail-layer">
+            <!-- Wing (spread) -->
+            <path d="M30 42 Q15 20 5 15 Q20 22 35 30 Q28 24 18 10 Q30 20 42 30 Q38 22 32 12 Q40 25 48 35 Z" fill="url(#macaw-blue)"/>
+            <path d="M42 35 Q38 30 34 22 Q40 28 46 34 Z" fill="url(#macaw-yellow)"/>
+            <!-- Tail feathers -->
+            <path d="M28 48 Q10 55 2 70 Q12 58 28 52 Z" fill="url(#macaw-blue)" opacity="0.9"/>
+            <path d="M30 50 Q14 58 8 74 Q16 60 32 54 Z" fill="url(#macaw-red)" opacity="0.8"/>
+            <path d="M32 52 Q18 62 14 76 Q22 64 36 56 Z" fill="url(#macaw-blue)" opacity="0.7"/>
+          </g>
+          <g class="highlight-layer">
+            <ellipse cx="55" cy="40" rx="25" ry="12" fill="url(#macaw-red)" opacity="0.15" style="mix-blend-mode:screen"/>
+          </g>
+        </svg>
       </div>
-      <!-- Ocean Transition -->
-      <div class="scene-waterline"></div>
-      <!-- Ocean Layer -->
-      <div class="scene-ocean">
-        <div class="coral coral-1"></div>
-        <div class="coral coral-2"></div>
-        <div class="coral coral-3"></div>
-        <div class="seaweed seaweed-1"></div>
-        <div class="seaweed seaweed-2"></div>
-        <div class="seaweed seaweed-3"></div>
-        <div class="bubble bubble-1"></div>
-        <div class="bubble bubble-2"></div>
-        <div class="bubble bubble-3"></div>
-        <div class="bubble bubble-4"></div>
-        <div class="bubble bubble-5"></div>
-      </div>
-      <!-- Animals -->
-      <div class="animal fox"></div>
-      <div class="animal owl"></div>
-      <div class="animal whale"></div>
-      <div class="animal jellyfish jellyfish-1"></div>
-      <div class="animal jellyfish jellyfish-2"></div>
-      <div class="animal deer"></div>
     </div>
-    <div class="hero-content">
+    <div class="env-content">
       <h1 class="hero-title">
         <span class="hero-title-line">Your</span>
         <span class="hero-title-line accent">Name</span>
@@ -107,283 +153,496 @@
       </div>
     </div>
     <div class="scroll-indicator" aria-hidden="true">
-      <span class="scroll-text">Scroll</span>
+      <span class="scroll-text">Descend</span>
       <div class="scroll-line"></div>
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- ABOUT SECTION                               -->
-  <!-- ═══════════════════════════════════════════ -->
-  <section id="about" class="section about">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">~ About ~</span>
-        <h2 class="section-title">A Little About Me</h2>
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- LAYER 2: CANOPY — About Section                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section id="about" class="env-layer layer-canopy">
+    <div class="env-bg" aria-hidden="true">
+      <!-- Dense canopy leaves -->
+      <div class="canopy-leaves canopy-left"></div>
+      <div class="canopy-leaves canopy-right"></div>
+      <div class="canopy-leaves canopy-center"></div>
+      <!-- Light rays filtering through -->
+      <div class="light-ray ray-1"></div>
+      <div class="light-ray ray-2"></div>
+      <div class="light-ray ray-3"></div>
+      <!-- Toucan perched -->
+      <div class="animal toucan" data-tilt="10">
+        <svg class="animal-svg" viewBox="0 0 110 100" xmlns="http://www.w3.org/2000/svg">
+          <g class="shadow-layer" filter="url(#shadow-soft)" opacity="0.2" transform="translate(3,5)">
+            <ellipse cx="55" cy="55" rx="28" ry="22" fill="#000"/>
+          </g>
+          <g class="body-layer">
+            <!-- Body -->
+            <ellipse cx="50" cy="58" rx="26" ry="22" fill="#1a1a1a"/>
+            <!-- Chest (white/yellow) -->
+            <ellipse cx="55" cy="62" rx="16" ry="16" fill="#fff8e0"/>
+            <ellipse cx="55" cy="68" rx="12" ry="10" fill="#ffe860"/>
+            <!-- Red patch under tail -->
+            <ellipse cx="32" cy="72" rx="8" ry="6" fill="#dd2020"/>
+            <!-- Head -->
+            <circle cx="72" cy="42" r="14" fill="#1a1a1a"/>
+            <!-- Eye ring -->
+            <circle cx="76" cy="40" r="5" fill="#3080d0"/>
+            <circle cx="76" cy="40" r="3" fill="#1a1a1a"/>
+            <circle cx="77" cy="39" r="1" fill="#fff"/>
+          </g>
+          <g class="detail-layer">
+            <!-- The magnificent beak -->
+            <path d="M85 38 Q105 34 108 42 Q106 48 98 50 Q90 50 84 46 Z" fill="url(#toucan-beak)"/>
+            <!-- Beak ridge line -->
+            <path d="M86 42 Q96 40 106 42" fill="none" stroke="#000" stroke-width="0.5" opacity="0.3"/>
+            <!-- Nostril -->
+            <circle cx="88" cy="41" r="1" fill="#000" opacity="0.5"/>
+            <!-- Tail feathers -->
+            <path d="M26 55 Q14 48 10 38" fill="none" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"/>
+          </g>
+          <g class="highlight-layer">
+            <ellipse cx="50" cy="50" rx="22" ry="18" fill="#fff" opacity="0.06"/>
+          </g>
+        </svg>
       </div>
-      <div class="about-grid">
-        <div class="about-portrait">
-          <div class="portrait-frame">
-            <div class="portrait-placeholder">
-              <!-- Placeholder: replace src with your photo -->
-              <svg viewBox="0 0 200 200" class="portrait-silhouette">
-                <rect width="200" height="200" rx="12" fill="#1a2f23"/>
-                <circle cx="100" cy="80" r="35" fill="#2d5a3d" opacity="0.6"/>
-                <ellipse cx="100" cy="160" rx="50" ry="35" fill="#2d5a3d" opacity="0.6"/>
-                <text x="100" y="200" text-anchor="middle" fill="#7ab892" font-size="11" font-family="Inter">Your Photo Here</text>
-              </svg>
+      <!-- Sloth hanging -->
+      <div class="animal sloth" data-tilt="6">
+        <svg class="animal-svg" viewBox="0 0 90 110" xmlns="http://www.w3.org/2000/svg">
+          <g class="shadow-layer" filter="url(#shadow-soft)" opacity="0.2" transform="translate(2,4)">
+            <ellipse cx="45" cy="60" rx="22" ry="28" fill="#000"/>
+          </g>
+          <g class="body-layer">
+            <!-- Branch it hangs from -->
+            <path d="M0 12 Q45 8 90 14" fill="none" stroke="#5a4030" stroke-width="6" stroke-linecap="round"/>
+            <!-- Arms reaching up -->
+            <path d="M30 20 Q28 30 32 40" fill="none" stroke="url(#sloth-body)" stroke-width="7" stroke-linecap="round"/>
+            <path d="M60 18 Q62 28 58 40" fill="none" stroke="url(#sloth-body)" stroke-width="7" stroke-linecap="round"/>
+            <!-- Claws -->
+            <g fill="#5a4535">
+              <ellipse cx="29" cy="17" rx="4" ry="3"/><ellipse cx="61" cy="15" rx="4" ry="3"/>
+            </g>
+            <!-- Body (hanging) -->
+            <ellipse cx="45" cy="58" rx="20" ry="24" fill="url(#sloth-body)"/>
+            <!-- Head -->
+            <circle cx="45" cy="38" r="14" fill="#b8a088"/>
+            <!-- Face mask -->
+            <ellipse cx="45" cy="40" rx="10" ry="8" fill="#d0c0a8"/>
+            <!-- Eyes (sleepy) -->
+            <ellipse cx="40" cy="38" rx="3" ry="1.5" fill="#2a2a2a"/>
+            <ellipse cx="50" cy="38" rx="3" ry="1.5" fill="#2a2a2a"/>
+            <!-- Dark eye patches -->
+            <ellipse cx="40" cy="38" rx="5" ry="3" fill="#5a4535" opacity="0.3"/>
+            <ellipse cx="50" cy="38" rx="5" ry="3" fill="#5a4535" opacity="0.3"/>
+            <!-- Nose -->
+            <ellipse cx="45" cy="42" rx="2" ry="1.2" fill="#4a3a2a"/>
+            <!-- Mouth (gentle smile) -->
+            <path d="M42 44 Q45 46 48 44" fill="none" stroke="#4a3a2a" stroke-width="0.8"/>
+          </g>
+          <g class="highlight-layer">
+            <ellipse cx="42" cy="48" rx="16" ry="20" fill="#fff" opacity="0.06"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="env-content">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">~ The Canopy ~</span>
+          <h2 class="section-title">A Little About Me</h2>
+        </div>
+        <div class="about-grid">
+          <div class="about-portrait">
+            <div class="portrait-frame">
+              <div class="portrait-placeholder">
+                <svg viewBox="0 0 200 200" class="portrait-silhouette">
+                  <rect width="200" height="200" rx="12" fill="#1a2f23"/>
+                  <circle cx="100" cy="80" r="35" fill="#2d5a3d" opacity="0.6"/>
+                  <ellipse cx="100" cy="160" rx="50" ry="35" fill="#2d5a3d" opacity="0.6"/>
+                  <text x="100" y="200" text-anchor="middle" fill="#7ab892" font-size="11" font-family="Inter">Your Photo Here</text>
+                </svg>
+              </div>
             </div>
-            <div class="portrait-leaves" aria-hidden="true"></div>
+          </div>
+          <div class="about-text">
+            <p class="about-lead">Hello, and welcome to my little corner of the internet.</p>
+            <p>I'm a [your description here] — someone who finds peace in the quiet hours of the morning, in the smell of old books, and in the way light filters through forest canopies. This site is my den: a place to collect thoughts, share work, and keep a record of the things that matter most.</p>
+            <p>When I'm not writing or working on projects, you'll find me spending time with my family — [mention family here]. We love [hobbies/interests], and our home is filled with [personal details that make it feel warm].</p>
+            <div class="about-details">
+              <div class="detail-item"><span class="detail-icon">🌿</span><span class="detail-text">Based in [Your Location]</span></div>
+              <div class="detail-item"><span class="detail-icon">📖</span><span class="detail-text">Currently reading: [Book Title]</span></div>
+              <div class="detail-item"><span class="detail-icon">🎵</span><span class="detail-text">Listening to: [Artist/Album]</span></div>
+            </div>
           </div>
         </div>
-        <div class="about-text">
-          <p class="about-lead">
-            Hello, and welcome to my little corner of the internet.
-          </p>
-          <p>
-            I'm a [your description here] — someone who finds peace in the quiet hours of the morning,
-            in the smell of old books, and in the way light filters through forest canopies.
-            This site is my den: a place to collect thoughts, share work, and keep a record of the things
-            that matter most.
-          </p>
-          <p>
-            When I'm not writing or working on projects, you'll find me spending time with my family —
-            [mention family here]. We love [hobbies/interests], and our home is filled with
-            [personal details that make it feel warm].
-          </p>
-          <div class="about-details">
-            <div class="detail-item">
-              <span class="detail-icon">🌿</span>
-              <span class="detail-text">Based in [Your Location]</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- LAYER 3: BRANCHES — Writings Section                   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section id="writings" class="env-layer layer-branches">
+    <div class="env-bg" aria-hidden="true">
+      <!-- Tree trunks and branches -->
+      <div class="tree-trunk trunk-left"></div>
+      <div class="tree-trunk trunk-right"></div>
+      <div class="branch branch-1"></div>
+      <div class="branch branch-2"></div>
+      <div class="branch branch-3"></div>
+      <!-- Hanging vines -->
+      <div class="vine vine-1"></div>
+      <div class="vine vine-2"></div>
+      <div class="vine vine-3"></div>
+      <!-- Tree frog on a branch -->
+      <div class="animal treefrog" data-tilt="16">
+        <svg class="animal-svg" viewBox="0 0 70 60" xmlns="http://www.w3.org/2000/svg">
+          <g class="shadow-layer" filter="url(#shadow-soft)" opacity="0.2" transform="translate(2,3)">
+            <ellipse cx="35" cy="35" rx="18" ry="14" fill="#000"/>
+          </g>
+          <g class="body-layer">
+            <!-- Body -->
+            <ellipse cx="35" cy="34" rx="18" ry="15" fill="url(#frog-body)"/>
+            <!-- Head -->
+            <ellipse cx="35" cy="22" rx="14" ry="10" fill="#38cc38"/>
+            <!-- Eyes (big bulging) -->
+            <circle cx="26" cy="16" r="7" fill="#44dd44"/>
+            <circle cx="44" cy="16" r="7" fill="#44dd44"/>
+            <circle cx="26" cy="16" r="5" fill="#dd2020"/>
+            <circle cx="44" cy="16" r="5" fill="#dd2020"/>
+            <circle cx="26" cy="16" r="2.5" fill="#1a1a1a"/>
+            <circle cx="44" cy="16" r="2.5" fill="#1a1a1a"/>
+            <circle cx="27" cy="15" r="0.8" fill="#fff"/>
+            <circle cx="45" cy="15" r="0.8" fill="#fff"/>
+            <!-- Front legs -->
+            <path d="M20 38 Q12 42 8 46" fill="none" stroke="#30b830" stroke-width="4" stroke-linecap="round"/>
+            <path d="M50 38 Q58 42 62 46" fill="none" stroke="#30b830" stroke-width="4" stroke-linecap="round"/>
+            <!-- Toe pads -->
+            <circle cx="7" cy="47" r="3" fill="#ff6030" opacity="0.8"/>
+            <circle cx="63" cy="47" r="3" fill="#ff6030" opacity="0.8"/>
+            <!-- Back legs -->
+            <path d="M22 44 Q16 52 12 56" fill="none" stroke="#28a828" stroke-width="5" stroke-linecap="round"/>
+            <path d="M48 44 Q54 52 58 56" fill="none" stroke="#28a828" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="11" cy="57" r="3" fill="#ff6030" opacity="0.8"/>
+            <circle cx="59" cy="57" r="3" fill="#ff6030" opacity="0.8"/>
+          </g>
+          <g class="detail-layer">
+            <!-- Smile -->
+            <path d="M28 28 Q35 32 42 28" fill="none" stroke="#1a6a1a" stroke-width="0.8"/>
+            <!-- Body stripe -->
+            <path d="M22 30 Q35 26 48 30" fill="none" stroke="#28a828" stroke-width="1" opacity="0.4"/>
+          </g>
+          <g class="highlight-layer">
+            <ellipse cx="32" cy="28" rx="14" ry="10" fill="#fff" opacity="0.08"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="env-content">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">~ The Branches ~</span>
+          <h2 class="section-title">Writings &amp; Thoughts</h2>
+          <p class="section-desc">Essays, reflections, and other quiet musings.</p>
+        </div>
+        <div class="writings-grid">
+          <article class="writing-card">
+            <div class="card-date"><span class="date-month">Jan</span><span class="date-day">15</span><span class="date-year">2026</span></div>
+            <div class="card-content">
+              <span class="card-tag">Essay</span>
+              <h3 class="card-title"><a href="#">Quiet Mornings &amp; Moss</a></h3>
+              <p class="card-excerpt">On the beauty of waking before the world does, and finding meaning in the smallest green things growing between stones.</p>
+              <span class="card-read-time">5 min read</span>
             </div>
-            <div class="detail-item">
-              <span class="detail-icon">📖</span>
-              <span class="detail-text">Currently reading: [Book Title]</span>
+          </article>
+          <article class="writing-card">
+            <div class="card-date"><span class="date-month">Dec</span><span class="date-day">28</span><span class="date-year">2025</span></div>
+            <div class="card-content">
+              <span class="card-tag">Reflection</span>
+              <h3 class="card-title"><a href="#">The Deep &amp; The Still</a></h3>
+              <p class="card-excerpt">Thoughts on what the river teaches us about patience, depth, and the unseen worlds beneath the surface.</p>
+              <span class="card-read-time">8 min read</span>
             </div>
-            <div class="detail-item">
-              <span class="detail-icon">🎵</span>
-              <span class="detail-text">Listening to: [Artist/Album]</span>
+          </article>
+          <article class="writing-card">
+            <div class="card-date"><span class="date-month">Nov</span><span class="date-day">10</span><span class="date-year">2025</span></div>
+            <div class="card-content">
+              <span class="card-tag">Personal</span>
+              <h3 class="card-title"><a href="#">Letters to the Canopy</a></h3>
+              <p class="card-excerpt">A series of small letters written to no one in particular — about growth, about roots, about reaching for the light.</p>
+              <span class="card-read-time">4 min read</span>
             </div>
-          </div>
+          </article>
+        </div>
+        <div class="section-cta"><a href="#" class="btn btn-ghost">View All Writings &rarr;</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- LAYER 4: FOREST FLOOR — Projects Section               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section id="projects" class="env-layer layer-floor">
+    <div class="env-bg" aria-hidden="true">
+      <!-- Fallen leaves, mushrooms, ferns -->
+      <div class="floor-fern fern-1"></div>
+      <div class="floor-fern fern-2"></div>
+      <div class="floor-mushroom mush-1"></div>
+      <div class="floor-mushroom mush-2"></div>
+      <div class="floor-mushroom mush-3"></div>
+      <!-- Jaguar prowling -->
+      <div class="animal jaguar" data-tilt="8">
+        <svg class="animal-svg" viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg">
+          <g class="shadow-layer" filter="url(#shadow-soft)" opacity="0.2" transform="translate(3,5)">
+            <ellipse cx="90" cy="60" rx="55" ry="22" fill="#000"/>
+          </g>
+          <g class="body-layer">
+            <!-- Body -->
+            <ellipse cx="90" cy="55" rx="52" ry="20" fill="url(#jaguar-body)"/>
+            <!-- Head -->
+            <circle cx="145" cy="48" r="16" fill="#d8a038"/>
+            <!-- Ears -->
+            <ellipse cx="138" cy="34" rx="5" ry="6" fill="#c89028"/>
+            <ellipse cx="152" cy="34" rx="5" ry="6" fill="#c89028"/>
+            <ellipse cx="138" cy="35" rx="3" ry="4" fill="#806020" opacity="0.4"/>
+            <ellipse cx="152" cy="35" rx="3" ry="4" fill="#806020" opacity="0.4"/>
+            <!-- Eyes -->
+            <ellipse cx="141" cy="46" rx="3.5" ry="3" fill="#88cc20"/>
+            <ellipse cx="151" cy="46" rx="3.5" ry="3" fill="#88cc20"/>
+            <ellipse cx="141" cy="46" rx="1.5" ry="2.5" fill="#1a1a1a"/>
+            <ellipse cx="151" cy="46" rx="1.5" ry="2.5" fill="#1a1a1a"/>
+            <circle cx="141.5" cy="45.5" r="0.6" fill="#fff"/>
+            <circle cx="151.5" cy="45.5" r="0.6" fill="#fff"/>
+            <!-- Nose -->
+            <ellipse cx="156" cy="50" rx="3" ry="2" fill="#3a2a1a"/>
+            <!-- Muzzle lines -->
+            <path d="M154 52 Q156 54 158 52" fill="none" stroke="#3a2a1a" stroke-width="0.6"/>
+            <!-- Legs -->
+            <rect x="55" y="70" width="10" height="24" rx="4" fill="#b88828"/>
+            <rect x="72" y="70" width="10" height="24" rx="4" fill="#c09030"/>
+            <rect x="105" y="70" width="10" height="24" rx="4" fill="#c09030"/>
+            <rect x="122" y="70" width="10" height="24" rx="4" fill="#b88828"/>
+          </g>
+          <g class="detail-layer">
+            <!-- Rosette spots -->
+            <circle cx="70" cy="50" r="5" fill="none" stroke="#6a4810" stroke-width="1.5" opacity="0.6"/>
+            <circle cx="85" cy="45" r="4" fill="none" stroke="#6a4810" stroke-width="1.5" opacity="0.6"/>
+            <circle cx="100" cy="52" r="5" fill="none" stroke="#6a4810" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="112" cy="46" r="4.5" fill="none" stroke="#6a4810" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="78" cy="58" r="3.5" fill="none" stroke="#6a4810" stroke-width="1.2" opacity="0.4"/>
+            <circle cx="95" cy="60" r="3" fill="none" stroke="#6a4810" stroke-width="1.2" opacity="0.4"/>
+            <circle cx="108" cy="58" r="4" fill="none" stroke="#6a4810" stroke-width="1.2" opacity="0.4"/>
+            <!-- Spot centers -->
+            <circle cx="70" cy="50" r="2" fill="#6a4810" opacity="0.15"/>
+            <circle cx="85" cy="45" r="1.5" fill="#6a4810" opacity="0.15"/>
+            <circle cx="100" cy="52" r="2" fill="#6a4810" opacity="0.15"/>
+            <!-- Tail -->
+            <path d="M38 55 Q22 50 15 58 Q10 65 18 68" fill="none" stroke="#c89030" stroke-width="6" stroke-linecap="round"/>
+            <!-- Tail spots -->
+            <circle cx="28" cy="54" r="2.5" fill="none" stroke="#6a4810" stroke-width="1" opacity="0.5"/>
+            <circle cx="18" cy="60" r="2" fill="none" stroke="#6a4810" stroke-width="1" opacity="0.5"/>
+            <!-- Whiskers -->
+            <line x1="156" y1="49" x2="170" y2="47" stroke="#d8c0a0" stroke-width="0.5" opacity="0.5"/>
+            <line x1="156" y1="51" x2="172" y2="51" stroke="#d8c0a0" stroke-width="0.5" opacity="0.5"/>
+            <line x1="156" y1="53" x2="170" y2="55" stroke="#d8c0a0" stroke-width="0.5" opacity="0.5"/>
+          </g>
+          <g class="highlight-layer">
+            <ellipse cx="90" cy="48" rx="40" ry="15" fill="#fff" opacity="0.05"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="env-content">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">~ The Forest Floor ~</span>
+          <h2 class="section-title">Projects</h2>
+          <p class="section-desc">Things I've built, grown, or set free into the world.</p>
+        </div>
+        <div class="projects-grid">
+          <a href="#" class="project-card">
+            <div class="project-icon">
+              <svg viewBox="0 0 48 48" width="48" height="48"><rect x="8" y="8" width="32" height="32" rx="4" fill="#1a3a4a" stroke="#4a9e8e" stroke-width="2"/><rect x="14" y="14" width="8" height="8" fill="#4a9e8e" opacity="0.7"/><rect x="26" y="14" width="8" height="8" fill="#4a9e8e" opacity="0.5"/><rect x="14" y="26" width="8" height="8" fill="#4a9e8e" opacity="0.5"/><rect x="26" y="26" width="8" height="8" fill="#4a9e8e" opacity="0.3"/></svg>
+            </div>
+            <h3 class="project-name">Project Name</h3>
+            <p class="project-desc">A brief description of this project. What it does, why it matters, and where to find it.</p>
+            <div class="project-tags"><span class="ptag">Open Source</span><span class="ptag">Web</span></div>
+            <span class="project-link-text">Explore &rarr;</span>
+          </a>
+          <a href="#" class="project-card">
+            <div class="project-icon">
+              <svg viewBox="0 0 48 48" width="48" height="48"><circle cx="24" cy="24" r="18" fill="none" stroke="#7ab892" stroke-width="2"/><circle cx="24" cy="24" r="8" fill="#7ab892" opacity="0.3"/></svg>
+            </div>
+            <h3 class="project-name">Another Project</h3>
+            <p class="project-desc">Something creative or technical you've made. Could be an app, a zine, a garden, anything.</p>
+            <div class="project-tags"><span class="ptag">Creative</span><span class="ptag">Writing</span></div>
+            <span class="project-link-text">Explore &rarr;</span>
+          </a>
+          <a href="#" class="project-card">
+            <div class="project-icon">
+              <svg viewBox="0 0 48 48" width="48" height="48"><path d="M24 6 L6 18 L6 38 L42 38 L42 18 Z" fill="none" stroke="#c4a882" stroke-width="2"/><rect x="18" y="26" width="12" height="12" fill="#c4a882" opacity="0.3"/></svg>
+            </div>
+            <h3 class="project-name">A Third Thing</h3>
+            <p class="project-desc">Maybe this is a community you started, or a collaborative effort.</p>
+            <div class="project-tags"><span class="ptag">Community</span></div>
+            <span class="project-link-text">Explore &rarr;</span>
+          </a>
         </div>
       </div>
     </div>
-    <!-- Decorative forest floor -->
-    <div class="section-flora about-flora" aria-hidden="true">
-      <div class="fern fern-left"></div>
-      <div class="mushroom mushroom-1"></div>
-      <div class="mushroom mushroom-2"></div>
-      <div class="fern fern-right"></div>
-    </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- WRITINGS SECTION                            -->
-  <!-- ═══════════════════════════════════════════ -->
-  <section id="writings" class="section writings">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">~ Journal ~</span>
-        <h2 class="section-title">Writings &amp; Thoughts</h2>
-        <p class="section-desc">Essays, reflections, and other quiet musings.</p>
-      </div>
-      <div class="writings-grid">
-        <!-- Writing Card 1 -->
-        <article class="writing-card">
-          <div class="card-date">
-            <span class="date-month">Jan</span>
-            <span class="date-day">15</span>
-            <span class="date-year">2026</span>
-          </div>
-          <div class="card-content">
-            <span class="card-tag">Essay</span>
-            <h3 class="card-title"><a href="#">Quiet Mornings &amp; Moss</a></h3>
-            <p class="card-excerpt">On the beauty of waking before the world does, and finding meaning in the smallest green things growing between stones.</p>
-            <span class="card-read-time">5 min read</span>
-          </div>
-          <div class="card-leaf" aria-hidden="true"></div>
-        </article>
-        <!-- Writing Card 2 -->
-        <article class="writing-card">
-          <div class="card-date">
-            <span class="date-month">Dec</span>
-            <span class="date-day">28</span>
-            <span class="date-year">2025</span>
-          </div>
-          <div class="card-content">
-            <span class="card-tag">Reflection</span>
-            <h3 class="card-title"><a href="#">The Deep &amp; The Still</a></h3>
-            <p class="card-excerpt">Thoughts on what the ocean teaches us about patience, depth, and the unseen worlds beneath the surface.</p>
-            <span class="card-read-time">8 min read</span>
-          </div>
-          <div class="card-leaf" aria-hidden="true"></div>
-        </article>
-        <!-- Writing Card 3 -->
-        <article class="writing-card">
-          <div class="card-date">
-            <span class="date-month">Nov</span>
-            <span class="date-day">10</span>
-            <span class="date-year">2025</span>
-          </div>
-          <div class="card-content">
-            <span class="card-tag">Personal</span>
-            <h3 class="card-title"><a href="#">Letters to the Canopy</a></h3>
-            <p class="card-excerpt">A series of small letters written to no one in particular — about growth, about roots, about reaching for the light.</p>
-            <span class="card-read-time">4 min read</span>
-          </div>
-          <div class="card-leaf" aria-hidden="true"></div>
-        </article>
-      </div>
-      <div class="section-cta">
-        <a href="#" class="btn btn-ghost">View All Writings &rarr;</a>
-      </div>
-    </div>
-  </section>
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- LAYER 5: WATERLINE — Transition                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="env-layer layer-waterline" aria-hidden="true">
+    <div class="water-surface"></div>
+    <div class="water-shimmer"></div>
+  </div>
 
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- PROJECTS SECTION                            -->
-  <!-- ═══════════════════════════════════════════ -->
-  <section id="projects" class="section projects">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">~ Workshop ~</span>
-        <h2 class="section-title">Projects</h2>
-        <p class="section-desc">Things I've built, grown, or set free into the world.</p>
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- LAYER 6: AMAZON RIVER — Contact Section                -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section id="contact" class="env-layer layer-river">
+    <div class="env-bg" aria-hidden="true">
+      <!-- Underwater plants -->
+      <div class="river-weed rw-1"></div>
+      <div class="river-weed rw-2"></div>
+      <div class="river-weed rw-3"></div>
+      <div class="river-weed rw-4"></div>
+      <!-- Bubbles -->
+      <div class="river-bubble rb-1"></div>
+      <div class="river-bubble rb-2"></div>
+      <div class="river-bubble rb-3"></div>
+      <div class="river-bubble rb-4"></div>
+      <!-- Amazon river dolphin -->
+      <div class="animal dolphin" data-tilt="10">
+        <svg class="animal-svg" viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg">
+          <g class="shadow-layer" filter="url(#shadow-soft)" opacity="0.2" transform="translate(2,4)">
+            <ellipse cx="75" cy="42" rx="50" ry="18" fill="#000"/>
+          </g>
+          <g class="body-layer">
+            <!-- Body -->
+            <path d="M20 42 Q40 20 80 28 Q120 20 145 38 Q148 42 145 46 Q120 60 80 54 Q40 60 20 42 Z" fill="url(#dolphin-body)"/>
+            <!-- Dorsal hump -->
+            <path d="M70 28 Q78 18 86 28" fill="#c07888"/>
+            <!-- Snout (long) -->
+            <path d="M145 38 Q158 38 160 40 Q158 42 145 42 Z" fill="#d090a0"/>
+            <!-- Eye -->
+            <circle cx="134" cy="38" r="3" fill="#2a1a1a"/>
+            <circle cx="134.5" cy="37.5" r="0.8" fill="#fff"/>
+            <!-- Pectoral fin -->
+            <path d="M95 48 Q100 60 90 62 Q85 58 90 48 Z" fill="#b06878"/>
+            <!-- Tail fluke -->
+            <path d="M20 42 Q8 34 4 28 Q12 34 18 38 Z" fill="#b06878"/>
+            <path d="M20 42 Q8 50 4 56 Q12 50 18 46 Z" fill="#b06878"/>
+          </g>
+          <g class="detail-layer">
+            <!-- Belly highlight -->
+            <path d="M40 46 Q80 52 130 44" fill="none" stroke="#e0a8b8" stroke-width="2" opacity="0.3"/>
+            <!-- Mouth line -->
+            <path d="M145 40 Q150 40.5 155 40" fill="none" stroke="#8a5060" stroke-width="0.5"/>
+          </g>
+          <g class="highlight-layer">
+            <ellipse cx="80" cy="35" rx="40" ry="10" fill="#fff" opacity="0.06"/>
+          </g>
+        </svg>
       </div>
-      <div class="projects-grid">
-        <!-- Project Card 1 -->
-        <a href="#" class="project-card">
-          <div class="project-icon">
-            <svg viewBox="0 0 48 48" width="48" height="48">
-              <rect x="8" y="8" width="32" height="32" rx="4" fill="#1a3a4a" stroke="#4a9e8e" stroke-width="2"/>
-              <rect x="14" y="14" width="8" height="8" fill="#4a9e8e" opacity="0.7"/>
-              <rect x="26" y="14" width="8" height="8" fill="#4a9e8e" opacity="0.5"/>
-              <rect x="14" y="26" width="8" height="8" fill="#4a9e8e" opacity="0.5"/>
-              <rect x="26" y="26" width="8" height="8" fill="#4a9e8e" opacity="0.3"/>
-            </svg>
-          </div>
-          <h3 class="project-name">Project Name</h3>
-          <p class="project-desc">A brief description of this project. What it does, why it matters, and where to find it.</p>
-          <div class="project-tags">
-            <span class="ptag">Open Source</span>
-            <span class="ptag">Web</span>
-          </div>
-          <span class="project-link-text">Explore &rarr;</span>
-        </a>
-        <!-- Project Card 2 -->
-        <a href="#" class="project-card">
-          <div class="project-icon">
-            <svg viewBox="0 0 48 48" width="48" height="48">
-              <circle cx="24" cy="24" r="18" fill="none" stroke="#7ab892" stroke-width="2"/>
-              <circle cx="24" cy="24" r="8" fill="#7ab892" opacity="0.3"/>
-              <line x1="24" y1="6" x2="24" y2="14" stroke="#7ab892" stroke-width="2"/>
-              <line x1="24" y1="34" x2="24" y2="42" stroke="#7ab892" stroke-width="2"/>
-              <line x1="6" y1="24" x2="14" y2="24" stroke="#7ab892" stroke-width="2"/>
-              <line x1="34" y1="24" x2="42" y2="24" stroke="#7ab892" stroke-width="2"/>
-            </svg>
-          </div>
-          <h3 class="project-name">Another Project</h3>
-          <p class="project-desc">Something creative or technical you've made. Could be an app, a zine, a garden, anything.</p>
-          <div class="project-tags">
-            <span class="ptag">Creative</span>
-            <span class="ptag">Writing</span>
-          </div>
-          <span class="project-link-text">Explore &rarr;</span>
-        </a>
-        <!-- Project Card 3 -->
-        <a href="#" class="project-card">
-          <div class="project-icon">
-            <svg viewBox="0 0 48 48" width="48" height="48">
-              <path d="M24 6 L6 18 L6 38 L42 38 L42 18 Z" fill="none" stroke="#c4a882" stroke-width="2"/>
-              <rect x="18" y="26" width="12" height="12" fill="#c4a882" opacity="0.3"/>
-              <circle cx="24" cy="16" r="4" fill="#c4a882" opacity="0.5"/>
-            </svg>
-          </div>
-          <h3 class="project-name">A Third Thing</h3>
-          <p class="project-desc">Maybe this is a community you started, or a collaborative effort. Show off the good things.</p>
-          <div class="project-tags">
-            <span class="ptag">Community</span>
-          </div>
-          <span class="project-link-text">Explore &rarr;</span>
-        </a>
+      <!-- Piranha -->
+      <div class="animal piranha" data-tilt="12">
+        <svg class="animal-svg" viewBox="0 0 70 55" xmlns="http://www.w3.org/2000/svg">
+          <g class="shadow-layer" filter="url(#shadow-soft)" opacity="0.2" transform="translate(2,3)">
+            <ellipse cx="32" cy="28" rx="20" ry="16" fill="#000"/>
+          </g>
+          <g class="body-layer">
+            <!-- Body -->
+            <ellipse cx="32" cy="27" rx="22" ry="17" fill="url(#piranha-body)"/>
+            <!-- Eye -->
+            <circle cx="44" cy="22" r="4" fill="#dd2020"/>
+            <circle cx="44" cy="22" r="2" fill="#1a1a1a"/>
+            <circle cx="44.5" cy="21.5" r="0.6" fill="#fff"/>
+            <!-- Mouth with teeth -->
+            <path d="M48 30 Q54 30 56 28" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+            <!-- Teeth -->
+            <path d="M50 29 L51 31 L52 29 L53 31 L54 29" fill="none" stroke="#f0f0f0" stroke-width="0.8"/>
+            <!-- Dorsal fin -->
+            <path d="M25 12 Q30 4 36 12" fill="#506068"/>
+            <!-- Tail -->
+            <path d="M10 22 Q4 18 2 12 Q8 18 10 24 Z" fill="#506068"/>
+            <path d="M10 32 Q4 36 2 42 Q8 36 10 30 Z" fill="#506068"/>
+            <!-- Anal fin -->
+            <path d="M22 42 Q26 48 32 42" fill="#cc3030" opacity="0.6"/>
+            <!-- Pectoral fin -->
+            <path d="M40 32 Q44 38 38 40 Q36 36 38 32 Z" fill="#506068" opacity="0.7"/>
+          </g>
+          <g class="detail-layer">
+            <!-- Scales hint -->
+            <path d="M20 24 Q32 20 44 24" fill="none" stroke="#708088" stroke-width="0.5" opacity="0.3"/>
+            <path d="M18 28 Q32 24 46 28" fill="none" stroke="#708088" stroke-width="0.5" opacity="0.3"/>
+            <!-- Red belly edge -->
+            <path d="M14 34 Q30 40 48 34" fill="none" stroke="#cc3030" stroke-width="1.5" opacity="0.4"/>
+          </g>
+          <g class="highlight-layer">
+            <ellipse cx="30" cy="24" rx="15" ry="10" fill="#fff" opacity="0.06"/>
+          </g>
+        </svg>
       </div>
     </div>
-    <!-- Decorative ocean elements -->
-    <div class="section-flora projects-flora" aria-hidden="true">
-      <div class="sea-plant sp-1"></div>
-      <div class="sea-plant sp-2"></div>
-      <div class="small-fish fish-1"></div>
-      <div class="small-fish fish-2"></div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- CONTACT / SOCIALS SECTION                   -->
-  <!-- ═══════════════════════════════════════════ -->
-  <section id="contact" class="section contact">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">~ Signals ~</span>
-        <h2 class="section-title">Find Me Elsewhere</h2>
-        <p class="section-desc">I exist in a few places on the internet. Here's where to look.</p>
-      </div>
-      <div class="socials-grid">
-        <a href="#" class="social-card" aria-label="GitHub">
-          <div class="social-icon">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.694.825.576C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/>
-            </svg>
-          </div>
-          <span class="social-name">GitHub</span>
-          <span class="social-handle">@yourusername</span>
-        </a>
-        <a href="#" class="social-card" aria-label="Twitter / X">
-          <div class="social-icon">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-          </div>
-          <span class="social-name">X / Twitter</span>
-          <span class="social-handle">@yourusername</span>
-        </a>
-        <a href="#" class="social-card" aria-label="Email">
-          <div class="social-icon">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="4" width="20" height="16" rx="2"/>
-              <path d="M2 4l10 8 10-8"/>
-            </svg>
-          </div>
-          <span class="social-name">Email</span>
-          <span class="social-handle">hello@yourdomain.com</span>
-        </a>
-        <a href="#" class="social-card" aria-label="LinkedIn">
-          <div class="social-icon">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-          </div>
-          <span class="social-name">LinkedIn</span>
-          <span class="social-handle">Your Name</span>
-        </a>
-      </div>
-      <div class="contact-message">
-        <p>Or send a message in a bottle — I always appreciate a kind word or an interesting conversation.</p>
+    <div class="env-content">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">~ The River ~</span>
+          <h2 class="section-title">Find Me Elsewhere</h2>
+          <p class="section-desc">I exist in a few places on the internet. Here's where to look.</p>
+        </div>
+        <div class="socials-grid">
+          <a href="#" class="social-card" aria-label="GitHub">
+            <div class="social-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.694.825.576C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/></svg></div>
+            <span class="social-name">GitHub</span>
+            <span class="social-handle">@yourusername</span>
+          </a>
+          <a href="#" class="social-card" aria-label="Twitter / X">
+            <div class="social-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
+            <span class="social-name">X / Twitter</span>
+            <span class="social-handle">@yourusername</span>
+          </a>
+          <a href="#" class="social-card" aria-label="Email">
+            <div class="social-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 4l10 8 10-8"/></svg></div>
+            <span class="social-name">Email</span>
+            <span class="social-handle">hello@yourdomain.com</span>
+          </a>
+          <a href="#" class="social-card" aria-label="LinkedIn">
+            <div class="social-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></div>
+            <span class="social-name">LinkedIn</span>
+            <span class="social-handle">Your Name</span>
+          </a>
+        </div>
+        <div class="contact-message"><p>Or send a message in a bottle — I always appreciate a kind word or an interesting conversation.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- FOOTER                                      -->
-  <!-- ═══════════════════════════════════════════ -->
-  <footer class="site-footer">
-    <div class="footer-terrain" aria-hidden="true"></div>
-    <div class="container footer-inner">
-      <div class="footer-left">
-        <span class="footer-logo">The Den</span>
-        <p class="footer-note">A quiet place on the internet.</p>
-      </div>
-      <div class="footer-right">
-        <p class="footer-copy">&copy; 2026 Your Name. Crafted with care.</p>
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- LAYER 7: UNDERGROUND ROOTS — Footer                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <footer class="env-layer layer-roots">
+    <div class="env-bg" aria-hidden="true">
+      <div class="root root-1"></div>
+      <div class="root root-2"></div>
+      <div class="root root-3"></div>
+      <div class="root root-4"></div>
+      <div class="earth-layers"></div>
+    </div>
+    <div class="env-content">
+      <div class="container footer-inner">
+        <div class="footer-left">
+          <span class="footer-logo">The Den</span>
+          <p class="footer-note">A quiet place on the internet, deep in the roots.</p>
+        </div>
+        <div class="footer-right">
+          <p class="footer-copy">&copy; 2026 Your Name. Crafted with care.</p>
+        </div>
       </div>
     </div>
   </footer>
