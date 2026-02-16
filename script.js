@@ -255,7 +255,7 @@
     // Collect animal data
     const animalEls = document.querySelectorAll('.animal');
     animalEls.forEach((el) => {
-      const svg = el.querySelector('.animal-svg');
+      const svg = el.querySelector('.animal-img');
       const tiltMax = parseFloat(el.dataset.tilt) || 10;
       animals.push({
         el,
