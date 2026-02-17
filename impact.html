@@ -224,10 +224,7 @@
     }
     .info-tooltip {
       display: none;
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%);
+      position: fixed;
       width: 280px;
       padding: 0.8rem 1rem;
       background: #1a1a1a;
@@ -237,20 +234,26 @@
       font-size: 0.75rem;
       line-height: 1.6;
       color: var(--impact-text);
-      z-index: 50;
+      z-index: 9999;
       box-shadow: 0 8px 24px rgba(0,0,0,0.5);
       text-align: left;
+      pointer-events: none;
     }
     .info-tooltip::after {
       content: '';
       position: absolute;
       top: 100%;
-      left: 50%;
+      left: var(--arrow-left, 50%);
       transform: translateX(-50%);
       border: 6px solid transparent;
       border-top-color: #1a1a1a;
     }
-    .info-toggle:hover .info-tooltip,
+    .info-tooltip.tooltip-below::after {
+      top: auto;
+      bottom: 100%;
+      border-top-color: transparent;
+      border-bottom-color: #1a1a1a;
+    }
     .info-toggle.active .info-tooltip {
       display: block;
     }
@@ -597,8 +600,7 @@
       .impact-nav { padding: 0.8rem 1rem; }
       .impact-nav .nav-right { display: none; }
       .fan-controls { flex-direction: column; }
-      .info-tooltip { width: 220px; left: auto; right: -10px; transform: none; }
-      .info-tooltip::after { left: auto; right: 15px; transform: none; }
+      .info-tooltip { width: 220px; }
     }
   </style>
 </head>
@@ -1295,6 +1297,90 @@
     });
     document.getElementById('fanView').addEventListener('change', drawFanChart);
     document.getElementById('careerTrack').addEventListener('change', drawFanChart);
+
+    // ===== TOOLTIP POSITIONING =====
+    // Fix: position tooltips with position:fixed so they escape overflow:hidden containers
+    document.querySelectorAll('.info-toggle').forEach(toggle => {
+      // Remove inline onclick handler completely
+      toggle.removeAttribute('onclick');
+      toggle.onclick = null;
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        const wasActive = this.classList.contains('active');
+        // Close all other tooltips
+        document.querySelectorAll('.info-toggle.active').forEach(t => {
+          t.classList.remove('active');
+          const tt = t.querySelector('.info-tooltip');
+          if (tt) tt.style.display = 'none';
+        });
+        if (!wasActive) {
+          this.classList.add('active');
+          const tooltip = this.querySelector('.info-tooltip');
+          if (tooltip) positionTooltip(this, tooltip);
+        }
+      });
+    });
+
+    function positionTooltip(toggle, tooltip) {
+      const rect = toggle.getBoundingClientRect();
+      const tw = 280; // tooltip width (or 220 on mobile)
+      const isMobile = window.innerWidth <= 768;
+      const tooltipWidth = isMobile ? 220 : 280;
+      tooltip.style.width = tooltipWidth + 'px';
+
+      // Position above the toggle by default
+      let left = rect.left + rect.width / 2 - tooltipWidth / 2;
+      let top = rect.top - 8; // 8px gap above toggle
+
+      // Clamp horizontally to viewport
+      if (left < 8) left = 8;
+      if (left + tooltipWidth > window.innerWidth - 8) left = window.innerWidth - tooltipWidth - 8;
+
+      // Temporarily show to measure height
+      tooltip.style.display = 'block';
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = '0px';
+      const tooltipHeight = tooltip.offsetHeight;
+
+      // Check if tooltip fits above; if not, show below
+      if (rect.top - tooltipHeight - 8 < 0) {
+        // Show below
+        top = rect.bottom + 8;
+        tooltip.classList.add('tooltip-below');
+      } else {
+        top = rect.top - tooltipHeight - 8;
+        tooltip.classList.remove('tooltip-below');
+      }
+
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+
+      // Position the arrow to point at the toggle center
+      const arrowLeft = rect.left + rect.width / 2 - left;
+      tooltip.style.setProperty('--arrow-left', arrowLeft + 'px');
+    }
+
+    // Close tooltips when clicking elsewhere
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.info-toggle')) {
+        document.querySelectorAll('.info-toggle.active').forEach(t => {
+          t.classList.remove('active');
+          const tt = t.querySelector('.info-tooltip');
+          if (tt) tt.style.display = 'none';
+        });
+      }
+    });
+
+    // Reposition on scroll/resize
+    window.addEventListener('scroll', function() {
+      const active = document.querySelector('.info-toggle.active');
+      if (active) {
+        const tooltip = active.querySelector('.info-tooltip');
+        if (tooltip) positionTooltip(active, tooltip);
+      }
+    }, true);
   </script>
 
 </body>
